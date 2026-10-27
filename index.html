@@ -59,15 +59,6 @@
             border: 1px solid #e2e8f0;
             box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05), 0 2px 4px -1px rgba(0, 0, 0, 0.03);
         }
-        .light-card-hover:hover {
-            box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
-        }
-        .glow-blue {
-            box-shadow: 0 0 15px rgba(37, 99, 235, 0.2);
-        }
-        .glow-red {
-            box-shadow: 0 0 15px rgba(225, 29, 72, 0.2);
-        }
         @keyframes pulseSlow {
             0%, 100% { opacity: 1; }
             50% { opacity: 0.6; }
@@ -101,7 +92,7 @@
                     <i class="fas fa-book-open"></i><span>知識庫 (8大向量)</span>
                 </button>
                 <button onclick="switchTab('phishing-eval')" id="nav-phishing-eval" class="px-3 py-2 rounded-lg text-slate-600 hover:text-slate-900 hover:bg-slate-100 flex items-center space-x-1.5 transition">
-                    <i class="fas fa-mail-bulk"></i><span>郵件辨識演練</span>
+                    <i class="fas fa-mail-bulk"></i><span>郵件辨識演練 (6組)</span>
                 </button>
                 <button onclick="switchTab('sandbox')" id="nav-sandbox" class="px-3 py-2 rounded-lg text-slate-600 hover:text-slate-900 hover:bg-slate-100 flex items-center space-x-1.5 transition">
                     <i class="fas fa-flask text-amber-500"></i><span>登入沙盒 (3組)</span>
@@ -117,8 +108,9 @@
             <!-- Auth Status & Action Control Bar -->
             <div class="flex items-center space-x-2 sm:space-x-3">
                 <!-- Config GAS URL Button -->
-                <button onclick="openGasModal()" title="設定 Google Apps Script 後端 URL" class="p-2 rounded-lg bg-slate-100 text-slate-600 hover:text-blue-600 hover:bg-blue-50 border border-slate-200 text-xs transition">
-                    <i class="fas fa-gear"></i>
+                <button onclick="openGasModal()" title="設定 Google Apps Script 後端 URL" class="p-2 rounded-lg bg-slate-100 text-slate-600 hover:text-blue-600 hover:bg-blue-50 border border-slate-200 text-xs transition flex items-center gap-1">
+                    <i class="fas fa-gear text-blue-600"></i>
+                    <span class="hidden sm:inline font-semibold">GAS 後端設定</span>
                 </button>
 
                 <!-- Auth Status Indicator -->
@@ -143,12 +135,12 @@
         <!-- GLOBAL ANNOUNCEMENT / SYSTEM STATUS BAR -->
         <div class="mb-6 p-4 rounded-2xl bg-gradient-to-r from-blue-50 via-indigo-50 to-slate-50 border border-blue-200/80 flex flex-col sm:flex-row items-center justify-between gap-3 text-xs shadow-sm">
             <div class="flex items-center space-x-3 text-slate-700">
-                <span class="px-2.5 py-1 rounded-md bg-blue-600 text-white font-bold font-mono text-[11px] uppercase tracking-wider">系統公告</span>
-                <span class="font-medium">歡迎使用社交工程防禦教育平台。本平台提供完整 8 大攻擊知識庫、6 組情境郵件標頭辨識、3 組偽造登入沙盒及 20 題檢測！</span>
+                <span class="px-2.5 py-1 rounded-md bg-blue-600 text-white font-bold font-mono text-[11px] uppercase tracking-wider">系統狀態</span>
+                <span class="font-medium">歡迎使用社交工程防禦教育平台。教師密碼現已改由 Google Apps Script (GAS) API 雲端即時驗證！</span>
             </div>
             <div class="flex items-center space-x-2 text-slate-500 font-mono text-[11px] whitespace-nowrap">
                 <i class="fas fa-server text-emerald-500"></i>
-                <span>GAS 後端：</span>
+                <span>後端驗證狀態：</span>
                 <span id="gas-status-label" class="font-bold text-slate-700">LocalStorage 模式 (未設定 API)</span>
             </div>
         </div>
@@ -192,7 +184,7 @@
                             <i class="fa-solid fa-bullseye"></i> 點擊熱點互動測試 (Hotspot Spotter)
                         </div>
                         <h2 class="text-2xl sm:text-3xl font-extrabold text-slate-900 flex items-center gap-2.5">
-                            <i class="fa-solid fa-envelope-open-text text-amber-500"></i> 擬真企業釣魚郵件防禦模擬器
+                            <i class="fa-solid fa-envelope-open-text text-amber-500"></i> 擬真企業釣魚郵件防禦模擬器 (6 大情境)
                         </h2>
                         <p class="text-slate-500 text-xs sm:text-sm mt-1">
                             試著檢視下方郵件！點擊郵件內的<span class="text-amber-600 font-bold">寄件人地址、郵件標頭、急迫語氣標題、附件或連結</span>以解鎖紅旗細節。
@@ -202,7 +194,7 @@
                     <!-- Scenario Dropdown Switcher -->
                     <div class="flex items-center gap-3 bg-slate-50 p-2.5 rounded-xl border border-slate-200">
                         <label for="scenario-selector" class="text-xs text-slate-600 font-bold whitespace-nowrap pl-2">演練情境：</label>
-                        <select id="scenario-selector" class="bg-white text-slate-800 text-xs sm:text-sm rounded-lg px-3 py-2 border border-slate-300 focus:outline-none focus:border-blue-600 cursor-pointer shadow-sm">
+                        <select id="scenario-selector" onchange="renderScenarioEmail(this.value)" class="bg-white text-slate-800 text-xs sm:text-sm rounded-lg px-3 py-2 border border-slate-300 focus:outline-none focus:border-blue-600 cursor-pointer shadow-sm">
                             <option value="0">情境 1：HR 人力資源處 - 2026 年終績效獎金發放通知</option>
                             <option value="1">情境 2：IT 資訊處 - Microsoft 365 密碼過期強制重設</option>
                             <option value="2">情境 3：快捷包裹 - 國際快遞二次配送地址補件</option>
@@ -257,14 +249,14 @@
                                         <i class="fa-solid fa-magnifying-glass text-blue-600"></i>
                                         郵件細節解析面板
                                     </h3>
-                                    <span id="simulator-progress-badge" class="text-xs bg-slate-200 text-slate-700 px-2.5 py-0.5 rounded-full font-mono font-bold">已發現熱點: 0 / 0</span>
+                                    <span id="simulator-progress-badge" class="text-xs bg-slate-200 text-slate-700 px-2.5 py-0.5 rounded-full font-mono font-bold">已點擊解鎖紅旗</span>
                                 </div>
 
                                 <div id="inspector-feedback-content" class="space-y-3">
                                     <div class="p-6 rounded-xl bg-white border border-dashed border-slate-300 text-center text-slate-500 text-xs py-14 shadow-sm">
                                         <i class="fa-solid fa-hand-pointer text-3xl mb-3 text-blue-500 opacity-60 animate-bounce"></i>
-                                        <p class="font-semibold text-slate-700">請點擊左側郵件中的任何可疑標題、發件者、連結或附件。</p>
-                                        <p class="mt-1 text-[11px] text-slate-500">系統將顯示 SPF/DKIM 認證狀態與域名偽造解析。</p>
+                                        <p class="font-semibold text-slate-700">請點擊左側郵件中的發件者、SPF標頭、超連結或急迫警訊。</p>
+                                        <p class="mt-1 text-[11px] text-slate-500">系統將為您剖析真實紅旗與域名偽造特徵。</p>
                                     </div>
                                 </div>
                             </div>
@@ -349,7 +341,7 @@
                                 <form id="form-m365" onsubmit="triggerInterception(event, 'Microsoft 365')">
                                     <div class="space-y-4">
                                         <div>
-                                            <input type="text" id="m365-email" required placeholder="電子郵件、電話或 Skype" value="user@company.com.tw" class="w-full px-3 py-2 text-sm border-b-2 border-slate-300 focus:border-blue-600 outline-none transition bg-transparent text-slate-800">
+                                            <input type="text" id="m365-email" required placeholder="電子郵件、電話或 Skype" value="user@school.edu.tw" class="w-full px-3 py-2 text-sm border-b-2 border-slate-300 focus:border-blue-600 outline-none transition bg-transparent text-slate-800">
                                         </div>
                                         <div>
                                             <input type="password" id="m365-pass" required placeholder="密碼" value="Password123!" class="w-full px-3 py-2 text-sm border-b-2 border-slate-300 focus:border-blue-600 outline-none transition bg-transparent text-slate-800">
@@ -380,12 +372,12 @@
                                         <path fill="#EA4335" d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.06l3.66 2.84c.87-2.6 3.3-4.52 6.16-4.52z"/>
                                     </svg>
                                     <h3 class="text-xl font-semibold text-slate-800">登入您的 Google 帳戶</h3>
-                                    <p class="text-xs text-slate-500 mt-1">使用您的企業 Workspace 帳戶</p>
+                                    <p class="text-xs text-slate-500 mt-1">使用您的 Workspace 帳戶</p>
                                 </div>
                                 <form id="form-google" onsubmit="triggerInterception(event, 'Google Workspace')">
                                     <div class="space-y-4">
                                         <div>
-                                            <input type="text" id="google-email" required placeholder="電子郵件或電話號碼" value="admin@enterprise-corp.com" class="w-full px-4 py-3 text-sm border border-slate-300 rounded-lg focus:border-blue-600 outline-none transition text-slate-800">
+                                            <input type="text" id="google-email" required placeholder="電子郵件或電話號碼" value="student@enterprise.com" class="w-full px-4 py-3 text-sm border border-slate-300 rounded-lg focus:border-blue-600 outline-none transition text-slate-800">
                                         </div>
                                         <div>
                                             <input type="password" id="google-pass" required placeholder="請輸入您的密碼" value="GoogleSecure#2026" class="w-full px-4 py-3 text-sm border border-slate-300 rounded-lg focus:border-blue-600 outline-none transition text-slate-800">
@@ -503,11 +495,11 @@
                     <i class="fas fa-user-lock text-3xl text-amber-600"></i>
                     <div>
                         <h3 class="font-bold text-base">測驗前請先填寫學員資訊</h3>
-                        <p class="text-xs text-amber-700 mt-0.5">系統將記錄您的學號、姓名與部門以核發研習證明及登記成績。</p>
+                        <p class="text-xs text-amber-700 mt-0.5">系統將記錄您的班級、座號與姓名以登錄成績至 Google Apps Script 雲端試算表。</p>
                     </div>
                 </div>
                 <button onclick="openStudentLoginModal()" class="px-5 py-2.5 rounded-xl bg-amber-600 hover:bg-amber-700 text-white font-bold text-xs shadow-md transition whitespace-nowrap">
-                    <i class="fas fa-id-card mr-1.5"></i> 立即登入學員身份
+                    <i class="fas fa-id-card mr-1.5"></i> 填寫學員資訊 (班級/座號/姓名)
                 </button>
             </div>
 
@@ -519,7 +511,7 @@
                     <span class="px-3 py-1 bg-blue-100 text-blue-700 font-mono font-bold text-xs rounded-full">
                         Comprehensive Security Assessment
                     </span>
-                    <h2 class="text-2xl sm:text-4xl font-extrabold text-slate-900">20 題企業資安社交工程綜合隨堂測驗</h2>
+                    <h2 class="text-2xl sm:text-4xl font-extrabold text-slate-900">20 題資安社交工程綜合隨堂測驗</h2>
                     <p class="text-slate-500 text-xs sm:text-sm max-w-2xl mx-auto">題庫涵蓋郵件標頭辨識、MFA 疲勞轟炸、Quishing (QR Code 釣魚)、Deepfake 聲紋詐騙、Lookalike Domain 與 SPF/DKIM/DMARC 認證。</p>
                 </div>
 
@@ -550,7 +542,7 @@
                         答題進度：<span class="text-blue-600 font-bold" id="exam-answered-count">0</span> / 20 題
                     </div>
                     <button onclick="submitExam()" class="w-full sm:w-auto px-8 py-3.5 rounded-xl bg-gradient-to-r from-blue-600 via-indigo-600 to-purple-600 hover:from-blue-700 hover:to-purple-700 text-white font-extrabold text-xs sm:text-sm shadow-lg transition active:scale-95">
-                        <i class="fa-solid fa-paper-plane mr-2"></i> 提交 20 題測驗並生成成績報告
+                        <i class="fa-solid fa-paper-plane mr-2"></i> 提交 20 題測驗並同步至 GAS
                     </button>
                 </div>
 
@@ -568,31 +560,34 @@
         <!-- ========================================== -->
         <section id="tab-teacher" class="tab-content hidden space-y-6">
             
-            <!-- TEACHER LOGIN GATE (Shown if not logged in as Teacher) -->
+            <!-- TEACHER LOGIN GATE (Authenticated via GAS API) -->
             <div id="teacher-login-gate" class="bg-white border border-slate-200 rounded-2xl p-8 max-w-md mx-auto shadow-xl text-center space-y-6 my-12">
                 <div class="w-16 h-16 bg-purple-100 text-purple-600 rounded-2xl flex items-center justify-center mx-auto text-2xl shadow-inner">
                     <i class="fas fa-lock"></i>
                 </div>
                 <div>
-                    <h3 class="text-xl font-extrabold text-slate-900">教師與資安官身份認證</h3>
-                    <p class="text-xs text-slate-500 mt-1">此後台受權限保護。請輸入教師管理密碼以查看全校/全公司成績及解析。</p>
+                    <h3 class="text-xl font-extrabold text-slate-900">教師與資安官權限認證</h3>
+                    <p class="text-xs text-slate-500 mt-1">請輸入教師密碼。系統將透過 Google Apps Script API 進行雲端比對。</p>
                 </div>
                 <form onsubmit="handleTeacherAuth(event)" class="space-y-4 text-left">
                     <div>
                         <label class="block text-xs font-semibold text-slate-700 mb-1">教師管理密碼</label>
                         <div class="relative">
-                            <input type="password" id="teacher-password-input" required placeholder="預設密碼：teacher123" class="w-full px-4 py-2.5 text-sm border border-slate-300 rounded-xl focus:border-purple-600 outline-none transition pr-10">
+                            <input type="password" id="teacher-password-input" required placeholder="請輸入教師密碼 (預設: teacher123)" class="w-full px-4 py-2.5 text-sm border border-slate-300 rounded-xl focus:border-purple-600 outline-none transition pr-10">
                             <i class="fas fa-key absolute right-3 top-3 text-slate-400 text-sm"></i>
                         </div>
-                        <p class="text-[11px] text-slate-400 mt-1">💡 預設測試密碼為：<code class="bg-slate-100 px-1 py-0.5 rounded text-purple-600 font-bold">teacher123</code></p>
+                        <p class="text-[11px] text-slate-400 mt-1 flex items-center justify-between">
+                            <span>💡 預設密碼為 <code class="bg-slate-100 px-1 text-purple-600 font-bold">teacher123</code></span>
+                            <span id="auth-spinner" class="hidden text-purple-600 font-bold"><i class="fas fa-spinner fa-spin mr-1"></i>驗證中...</span>
+                        </p>
                     </div>
-                    <button type="submit" class="w-full py-3 bg-purple-600 hover:bg-purple-700 text-white font-bold rounded-xl text-xs sm:text-sm transition shadow-md">
-                        登入教師管理後台
+                    <button type="submit" id="btn-teacher-login" class="w-full py-3 bg-purple-600 hover:bg-purple-700 text-white font-bold rounded-xl text-xs sm:text-sm transition shadow-md flex items-center justify-center gap-2">
+                        <i class="fas fa-cloud-arrow-up"></i> 經由 GAS 雲端驗證登入
                     </button>
                 </form>
             </div>
 
-            <!-- TEACHER ADMIN DASHBOARD PANEL (Shown when Authenticated) -->
+            <!-- TEACHER ADMIN DASHBOARD PANEL (Shown when Authenticated via GAS) -->
             <div id="teacher-dashboard-panel" class="hidden space-y-6">
                 
                 <!-- Admin Header Banner -->
@@ -603,7 +598,7 @@
                                 <i class="fa-solid fa-user-gear"></i> Admin Security Command Center
                             </div>
                             <h2 class="text-2xl sm:text-3xl font-extrabold mt-2">教師與資安官成績管理後台</h2>
-                            <p class="text-purple-200 text-xs sm:text-sm">實時監控學員測驗成績、高風險人員比例、及格率與 CSV 報表匯出。</p>
+                            <p class="text-purple-200 text-xs sm:text-sm">實時監控全校/全班學員測驗成績、高風險人員比例與 CSV 報表匯出。</p>
                         </div>
                         
                         <div class="flex flex-wrap items-center gap-2.5">
@@ -614,7 +609,7 @@
                                 <i class="fa-solid fa-file-csv"></i> 匯出 CSV 報表
                             </button>
                             <button onclick="openChangeTeacherPasswordModal()" class="px-3.5 py-2 rounded-xl bg-purple-700 hover:bg-purple-600 text-white font-bold text-xs flex items-center gap-1.5 transition">
-                                <i class="fa-solid fa-key"></i> 修改密碼
+                                <i class="fa-solid fa-key"></i> 修改雲端密碼
                             </button>
                             <button onclick="logoutTeacher()" class="px-3.5 py-2 rounded-xl bg-red-600/80 hover:bg-red-600 text-white font-bold text-xs flex items-center gap-1.5 transition">
                                 <i class="fa-solid fa-right-from-bracket"></i> 登出教師
@@ -668,23 +663,13 @@
                         <!-- Search Input -->
                         <div class="relative w-full sm:w-64">
                             <i class="fa-solid fa-magnifying-glass absolute left-3 top-3 text-xs text-slate-400"></i>
-                            <input type="text" id="admin-search-input" oninput="renderAdminTable()" placeholder="搜尋姓名或學號..." class="w-full bg-slate-50 border border-slate-300 rounded-xl pl-9 pr-3 py-2 text-xs text-slate-800 focus:outline-none focus:border-blue-600">
+                            <input type="text" id="admin-search-input" oninput="renderAdminTable()" placeholder="搜尋姓名、班級或座號..." class="w-full bg-slate-50 border border-slate-300 rounded-xl pl-9 pr-3 py-2 text-xs text-slate-800 focus:outline-none focus:border-blue-600">
                         </div>
-                        
-                        <!-- Dept Filter -->
-                        <select id="admin-dept-filter" onchange="renderAdminTable()" class="w-full sm:w-auto bg-slate-50 border border-slate-300 text-xs rounded-xl px-3 py-2 text-slate-800 focus:outline-none focus:border-blue-600">
-                            <option value="ALL">所有部門 / 班級</option>
-                            <option value="資訊技術處 (IT)">資訊技術處 (IT)</option>
-                            <option value="財務金融處 (Finance)">財務金融處 (Finance)</option>
-                            <option value="人力資源處 (HR)">人力資源處 (HR)</option>
-                            <option value="業務行銷部 (Sales)">業務行銷部 (Sales)</option>
-                            <option value="營運總務處 (Ops)">營運總務處 (Ops)</option>
-                        </select>
                     </div>
 
                     <div class="flex items-center gap-2 text-xs text-slate-500">
                         <button onclick="clearGradeRecords()" class="text-xs text-red-600 hover:underline">
-                            <i class="fa-solid fa-trash-can mr-1"></i>重置本地成績
+                            <i class="fa-solid fa-trash-can mr-1"></i>重置本地快取紀錄
                         </button>
                     </div>
                 </div>
@@ -695,11 +680,12 @@
                         <table class="w-full text-left border-collapse">
                             <thead>
                                 <tr class="bg-slate-100 border-b border-slate-200 text-[11px] uppercase font-mono text-slate-600 tracking-wider">
-                                    <th class="py-3.5 px-4">學員姓名 / 員編</th>
-                                    <th class="py-3.5 px-4">所屬部門</th>
+                                    <th class="py-3.5 px-4">班級</th>
+                                    <th class="py-3.5 px-4">座號</th>
+                                    <th class="py-3.5 px-4">學員姓名</th>
                                     <th class="py-3.5 px-4">測驗成績</th>
                                     <th class="py-3.5 px-4">及格狀態</th>
-                                    <th class="py-3.5 px-4">完成時間</th>
+                                    <th class="py-3.5 px-4">提交時間</th>
                                     <th class="py-3.5 px-4 text-center">操作</th>
                                 </tr>
                             </thead>
@@ -710,14 +696,14 @@
                     </div>
                 </div>
 
-                <!-- Official Answer Keys View (Teacher Only Access) -->
+                <!-- Official Answer Keys View (Teacher Only Access via GAS) -->
                 <div class="bg-white border border-slate-200 rounded-2xl p-6 sm:p-8 space-y-4 shadow-sm">
                     <div class="flex items-center justify-between border-b border-slate-200 pb-4">
                         <h3 class="text-lg font-bold text-slate-900 flex items-center gap-2">
-                            <i class="fas fa-key text-purple-600"></i> 20 題官方標準解答與解析 (教師權限)
+                            <i class="fas fa-key text-purple-600"></i> 20 題官方標準解答與解析 (GAS 雲端載入)
                         </h3>
                         <button onclick="loadOfficialAnswerKeys()" class="text-xs font-bold text-purple-600 hover:text-purple-700 bg-purple-50 px-3 py-1.5 rounded-lg border border-purple-200">
-                            <i class="fas fa-arrows-rotate mr-1"></i>載入 / 重新解析
+                            <i class="fas fa-arrows-rotate mr-1"></i>從 GAS 重新載入解答
                         </button>
                     </div>
                     <div id="teacher-answer-keys-display" class="grid grid-cols-1 md:grid-cols-2 gap-4 text-xs">
@@ -738,18 +724,18 @@
                 <span class="font-semibold text-slate-700">CyberDefender Social Engineering Platform &copy; 2026</span>
             </div>
             <p class="text-center sm:text-right text-slate-500">
-                本系統為企業與學術內部資安防禦演練專用平台。預設教師密碼：<code class="bg-slate-100 text-purple-600 font-bold px-1.5 py-0.5 rounded">teacher123</code>
+                本系統教師密碼經由 Google Apps Script API 進行雲端比對。
             </p>
         </div>
     </footer>
 
 
-    <!-- MODAL 1: STUDENT LOGIN MODAL -->
+    <!-- MODAL 1: STUDENT LOGIN MODAL (CLASS, SEAT NUMBER, NAME) -->
     <div id="modal-student-login" class="hidden fixed inset-0 bg-slate-900/50 backdrop-blur-sm z-50 flex items-center justify-center p-4">
-        <div class="bg-white border border-slate-200 rounded-2xl max-w-md w-full p-6 shadow-2xl space-y-5 animate-fade-in">
+        <div class="bg-white border border-slate-200 rounded-2xl max-w-md w-full p-6 shadow-2xl space-y-5">
             <div class="flex items-center justify-between border-b border-slate-200 pb-3">
                 <h3 class="font-extrabold text-lg text-slate-900 flex items-center gap-2">
-                    <i class="fas fa-user-graduate text-blue-600"></i> 學員身份登入 / 建立 profile
+                    <i class="fas fa-user-graduate text-blue-600"></i> 學員資訊登記
                 </h3>
                 <button onclick="closeStudentLoginModal()" class="text-slate-400 hover:text-slate-600">
                     <i class="fas fa-xmark text-lg"></i>
@@ -757,26 +743,20 @@
             </div>
             <form onsubmit="handleStudentLogin(event)" class="space-y-4">
                 <div>
-                    <label class="block text-xs font-semibold text-slate-700 mb-1">學號 / 員工編號</label>
-                    <input type="text" id="login-student-id" required placeholder="例：EMP-8821 或 S1100412" class="w-full px-3.5 py-2 text-xs sm:text-sm border border-slate-300 rounded-xl focus:border-blue-600 outline-none">
+                    <label class="block text-xs font-semibold text-slate-700 mb-1">班級 (Class)</label>
+                    <input type="text" id="login-student-class" required placeholder="例：資科一甲 或 101" class="w-full px-3.5 py-2 text-xs sm:text-sm border border-slate-300 rounded-xl focus:border-blue-600 outline-none">
                 </div>
                 <div>
-                    <label class="block text-xs font-semibold text-slate-700 mb-1">姓名</label>
-                    <input type="text" id="login-student-name" required placeholder="例：陳小明" class="w-full px-3.5 py-2 text-xs sm:text-sm border border-slate-300 rounded-xl focus:border-blue-600 outline-none">
+                    <label class="block text-xs font-semibold text-slate-700 mb-1">座號 (Seat Number)</label>
+                    <input type="number" id="login-student-seat" required placeholder="例：05" class="w-full px-3.5 py-2 text-xs sm:text-sm border border-slate-300 rounded-xl focus:border-blue-600 outline-none">
                 </div>
                 <div>
-                    <label class="block text-xs font-semibold text-slate-700 mb-1">所屬部門 / 班級</label>
-                    <select id="login-student-dept" class="w-full px-3.5 py-2 text-xs sm:text-sm border border-slate-300 rounded-xl focus:border-blue-600 outline-none">
-                        <option value="資訊技術處 (IT)">資訊技術處 (IT)</option>
-                        <option value="財務金融處 (Finance)">財務金融處 (Finance)</option>
-                        <option value="人力資源處 (HR)">人力資源處 (HR)</option>
-                        <option value="業務行銷部 (Sales)">業務行銷部 (Sales)</option>
-                        <option value="營運總務處 (Ops)">營運總務處 (Ops)</option>
-                    </select>
+                    <label class="block text-xs font-semibold text-slate-700 mb-1">姓名 (Name)</label>
+                    <input type="text" id="login-student-name" required placeholder="例：王小明" class="w-full px-3.5 py-2 text-xs sm:text-sm border border-slate-300 rounded-xl focus:border-blue-600 outline-none">
                 </div>
                 <div class="pt-2 flex justify-end space-x-2">
                     <button type="button" onclick="closeStudentLoginModal()" class="px-4 py-2 bg-slate-100 hover:bg-slate-200 text-slate-700 rounded-xl text-xs font-semibold">取消</button>
-                    <button type="submit" class="px-6 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded-xl text-xs font-bold shadow">確認登入</button>
+                    <button type="submit" class="px-6 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded-xl text-xs font-bold shadow">儲存資訊</button>
                 </div>
             </form>
         </div>
@@ -795,7 +775,7 @@
                 </button>
             </div>
             <p class="text-xs text-slate-600 leading-relaxed">
-                將您部署好的 GAS Web App URL 貼於下方，學員測驗成績與教師雲端解答將與 Google Sheets 實時連動。
+                將您部署好的 GAS Web App URL 貼於下方。教師密碼驗證、學員成績登錄與解答載入都將由該 GAS 網址處理。
             </p>
             <div>
                 <label class="block text-xs font-semibold text-slate-700 mb-1">GAS Web App Exec URL</label>
@@ -808,12 +788,12 @@
     </div>
 
 
-    <!-- MODAL 3: CHANGE TEACHER PASSWORD MODAL -->
+    <!-- MODAL 3: CHANGE TEACHER PASSWORD VIA GAS MODAL -->
     <div id="modal-change-pass" class="hidden fixed inset-0 bg-slate-900/50 backdrop-blur-sm z-50 flex items-center justify-center p-4">
         <div class="bg-white border border-slate-200 rounded-2xl max-w-md w-full p-6 shadow-2xl space-y-4">
             <div class="flex items-center justify-between border-b border-slate-200 pb-3">
                 <h3 class="font-extrabold text-base text-slate-900 flex items-center gap-2">
-                    <i class="fas fa-key text-purple-600"></i> 修改教師管理密碼
+                    <i class="fas fa-key text-purple-600"></i> 修改 GAS 雲端教師密碼
                 </h3>
                 <button onclick="closeChangeTeacherPasswordModal()" class="text-slate-400 hover:text-slate-600">
                     <i class="fas fa-xmark text-lg"></i>
@@ -821,11 +801,15 @@
             </div>
             <form onsubmit="handleChangeTeacherPassword(event)" class="space-y-3">
                 <div>
-                    <label class="block text-xs font-semibold text-slate-700 mb-1">新密碼</label>
+                    <label class="block text-xs font-semibold text-slate-700 mb-1">原教師密碼</label>
+                    <input type="password" id="old-teacher-pass" required placeholder="輸入舊密碼" class="w-full px-3.5 py-2 text-xs border border-slate-300 rounded-xl focus:border-purple-600 outline-none">
+                </div>
+                <div>
+                    <label class="block text-xs font-semibold text-slate-700 mb-1">新教師密碼</label>
                     <input type="password" id="new-teacher-pass" required placeholder="輸入新密碼" class="w-full px-3.5 py-2 text-xs border border-slate-300 rounded-xl focus:border-purple-600 outline-none">
                 </div>
                 <div class="pt-2 flex justify-end space-x-2">
-                    <button type="submit" class="px-5 py-2 bg-purple-600 hover:bg-purple-700 text-white rounded-xl text-xs font-bold shadow">更新密碼</button>
+                    <button type="submit" class="px-5 py-2 bg-purple-600 hover:bg-purple-700 text-white rounded-xl text-xs font-bold shadow">同步更新至 GAS</button>
                 </div>
             </form>
         </div>
@@ -838,7 +822,6 @@
         // SYSTEM STATE & LOCALSTORAGE PERSISTENCE
         // ==========================================
         let currentUser = JSON.parse(localStorage.getItem('se_user_session')) || { role: 'GUEST', name: '未登入 (訪客)' };
-        let teacherPassword = localStorage.getItem('se_teacher_password') || 'teacher123';
         let gasApiUrl = localStorage.getItem('se_gas_api_url') || '';
         let gradeRecords = JSON.parse(localStorage.getItem('se_grade_records')) || [];
 
@@ -852,6 +835,92 @@
             { id: 'badusb', title: 'BadUSB 隨身碟誘餌', icon: 'fa-usb', redFlag: '停車場或茶水間撿到的未知品牌 USB 隨身碟。', detail: '將微控制器偽裝成 USB 隨身碟，插入電腦後會自動模擬 HID 鍵盤輸入惡意 PowerShell 腳本。', mitigation: '禁用未知 USB 裝置，實施 USB 讀取政策管理。' },
             { id: 'watering', title: '水坑攻擊 (Watering Hole)', icon: 'fa-faucet-drip', redFlag: '產業經常造訪之第三方合法新聞/論壇網站遭植入惡意指令。', detail: '攻擊者不直接攻擊企業，而是入侵員工經常造訪的特定外圍網站並植入 Zero-day 腳本。', mitigation: '維持瀏覽器與端點防毒 EDR/XDR 實時更新。' },
             { id: 'osint', title: '社群 OSINT 偵查', icon: 'fa-user-secret', redFlag: '陌生人於 LinkedIn 假冒 Headhunter 傳送含惡意附件履歷。', detail: '利用公開來源情報 (OSINT) 蒐集組織架構與專案細節，為後續社交工程進行客製化劇本編排。', mitigation: '提升個人社群媒體隱私設定，勿過度洩漏專案細節。' }
+        ];
+
+        // 6 Email Scenarios Database
+        const scenarios = [
+            {
+                title: "HR 人力資源處 - 2026 年終績效獎金發放通知",
+                isPhishing: true,
+                sender: "hr-bonus@company-hr-rewards-portal.com",
+                headerInfo: "SPF: FAIL | DKIM: NONE | DMARC: FAIL",
+                subject: "【極重要】2026 年終績效獎金發放核對 - 請於本日 18:00 前完成填報",
+                body: `親愛的同仁您好：<br/><br/>2026 年度年終績效獎金已完成第一階段核算。請立即點擊下方連結登入企業 HR 系統核對個人銀行帳號與考績等第。<br/><br/>若未於本日 18:00 前核對完成，獎金發放將順延至下一季度。<br/><br/>
+                <a href="javascript:void(0)" onclick="inspectHotspot('link')" class="text-blue-600 font-bold underline">👉 [點擊此處] 進入 2026 HR 獎金核對 Portal (http://company-hr-rewards-portal.com/login)</a>`,
+                hotspots: {
+                    sender: "【紅旗警訊】發件者網域 company-hr-rewards-portal.com 為假冒的 Lookalike 網域，非公司官方域名。",
+                    header: "【標頭失敗】SPF 與 DMARC 驗證皆為 FAIL，代表該發件伺服器未獲得授權！",
+                    link: "【超連結危險】超連結指向 HTTP 未加密之外圍釣魚憑證收割網站。"
+                }
+            },
+            {
+                title: "IT 資訊處 - Microsoft 365 密碼過期強制重設",
+                isPhishing: true,
+                sender: "admin-notice@microsoft-security-auth.net",
+                headerInfo: "SPF: FAIL | DKIM: FAIL | DMARC: REJECT",
+                subject: "【系統警告】您的 Office 365 密碼即將在 4 小時內過期",
+                body: `您的企業帳戶密碼即將到期。為避免影響 Email 與 Teams 使用權限，請立即點擊下方按鈕維持現有密碼或完成重設。<br/><br/>
+                <a href="javascript:void(0)" onclick="inspectHotspot('link')" class="inline-block px-4 py-2 bg-blue-600 text-white font-bold rounded text-xs">保持現有密碼不變</a>`,
+                hotspots: {
+                    sender: "【紅旗警訊】寄件者域名為 microsoft-security-auth.net，非官方 microsoft.com。",
+                    header: "【驗證失敗】SPF/DKIM/DMARC 全部驗證失敗！",
+                    link: "【釣魚按鈕】點擊按鈕將導向側錄帳密之惡意沙盒網站。"
+                }
+            },
+            {
+                title: "快捷包裹 - 國際快遞二次配送地址補件",
+                isPhishing: true,
+                sender: "service@express-delivery-tracking-update.com",
+                headerInfo: "SPF: SOFTFAIL | DKIM: NONE",
+                subject: "包裹配送失敗通知：請更新您的收件地址與關稅資料",
+                body: `您的包裹單號 #TW-99820-EX 因收件地址不完整暫時滯留於轉運中心。請於 24 小時內補繳 NT$ 35 處理費並更新地址。<br/><br/>
+                <a href="javascript:void(0)" onclick="inspectHotspot('link')" class="text-amber-600 font-bold underline">更新配送地址與繳費</a>`,
+                hotspots: {
+                    sender: "【簡訊/郵件釣魚】假冒物流業者，利用低額費用騙取信用卡資。",
+                    header: "【SPF 異常】SPF 顯示 SOFTFAIL，發言伺服器來源可疑。",
+                    link: "【信用卡詐欺】連結將要求輸入信用卡卡號與 CVV 碼。"
+                }
+            },
+            {
+                title: "CEO 魚叉式詐騙 - 機密併購案緊急海外電匯 (BEC)",
+                isPhishing: true,
+                sender: "ceo-office@company-corp-group.com",
+                headerInfo: "SPF: FAIL | DKIM: NONE",
+                subject: "【極機密】請立即處理海外法律事務所履約保證金電匯",
+                body: `我是 CEO。我們正在進行一項極機密併購案，請勿向任何同仁討論。<br/>請於一小時內將美金 $45,000 電匯至指定新加坡受託帳戶，細節請見附件。`,
+                hotspots: {
+                    sender: "【BEC 詐騙】假冒 CEO 郵件，要求繞過正常財務審核流程。",
+                    header: "【標頭偽造】寄件者與公司真實網域有些微字母差異 (Lookalike)。",
+                    link: "【資金風險】未經電話離線確認即電匯將造成巨額損失。"
+                }
+            },
+            {
+                title: "國税局稽徵所 - 企業營利事業所得稅異常查核通知",
+                isPhishing: true,
+                sender: "tax-audit@gov-tax-service.org",
+                headerInfo: "SPF: FAIL | DMARC: FAIL",
+                subject: "【稅務查核】貴公司 2025 年度營法稅申報異常罰緩通知",
+                body: `國稅局通知：貴公司最新一期所得稅申報資料經系統勾稽有重大不符，請下載附檔「稅務異常明細.zip」查閱並於三日內說明。`,
+                hotspots: {
+                    sender: "【政府假冒】政府機關網域應為 .gov.tw 而非 .org。",
+                    header: "【SPF 失敗】驗證失敗代表郵件來自匿名黑客主機。",
+                    link: "【惡意附件】.zip 壓縮檔內含勒索軟體或木馬程式。"
+                }
+            },
+            {
+                title: "Google Workspace - 企業雲端硬碟容量已滿警告",
+                isPhishing: true,
+                sender: "no-reply@google-workspace-storage-alert.com",
+                headerInfo: "SPF: FAIL | DKIM: FAIL",
+                subject: "警告：您的 Google Drive 容量已達 99.8%，郵件即將停止接收",
+                body: `您的雲端硬碟空間即將耗盡。請立即點擊下方連結申請免費 50GB 企業擴充容量。<br/><br/>
+                <a href="javascript:void(0)" onclick="inspectHotspot('link')" class="text-blue-600 font-bold underline">升級擴充空間</a>`,
+                hotspots: {
+                    sender: "【域名偽造】google-workspace-storage-alert.com 為第三方註冊之惡意網域。",
+                    header: "【DKIM 失敗】未通過 Google 官方數位簽章。",
+                    link: "【憑證竊取】騙取 Google 帳號授權 Tokens。"
+                }
+            }
         ];
 
         // 20 Exam Questions Database
@@ -900,7 +969,7 @@
 
             if (currentUser.role === 'TEACHER') {
                 dot.className = 'w-2 h-2 rounded-full bg-purple-500 animate-pulse';
-                label.innerText = '教師/資安官';
+                label.innerText = '教師/資安官 (GAS Verified)';
                 container.innerHTML = `<button onclick="logoutAll()" class="px-3 py-1.5 rounded-lg bg-slate-200 hover:bg-slate-300 text-slate-700 font-bold text-xs transition"><i class="fas fa-right-from-bracket mr-1"></i> 登出</button>`;
             } else if (currentUser.role === 'STUDENT') {
                 dot.className = 'w-2 h-2 rounded-full bg-emerald-500';
@@ -910,7 +979,7 @@
                 if (profileBar && studentBanner) {
                     profileBar.classList.remove('hidden');
                     studentBanner.classList.add('hidden');
-                    activeStudentDisplay.innerText = `${currentUser.name} (${currentUser.studentId || 'N/A'}) - ${currentUser.department || 'N/A'}`;
+                    activeStudentDisplay.innerText = `班級：${currentUser.className || 'N/A'} | 座號：${currentUser.seatNumber || 'N/A'} | 姓名：${currentUser.name || 'N/A'}`;
                 }
             } else {
                 dot.className = 'w-2 h-2 rounded-full bg-slate-400';
@@ -934,15 +1003,15 @@
 
         function handleStudentLogin(e) {
             e.preventDefault();
-            const sid = document.getElementById('login-student-id').value.trim();
+            const sclass = document.getElementById('login-student-class').value.trim();
+            const sseat = document.getElementById('login-student-seat').value.trim();
             const sname = document.getElementById('login-student-name').value.trim();
-            const sdept = document.getElementById('login-student-dept').value;
 
             currentUser = {
                 role: 'STUDENT',
-                studentId: sid,
-                name: sname,
-                department: sdept
+                className: sclass,
+                seatNumber: sseat,
+                name: sname
             };
 
             localStorage.setItem('se_user_session', JSON.stringify(currentUser));
@@ -950,23 +1019,48 @@
             updateAuthUI();
         }
 
-        function handleTeacherAuth(e) {
+        /**
+         * 教師雲端密碼認證 (經由 GAS API)
+         */
+        async function handleTeacherAuth(e) {
             e.preventDefault();
-            const pass = document.getElementById('teacher-password-input').value;
-            if (pass === teacherPassword) {
-                currentUser = { role: 'TEACHER', name: '教師/資安官' };
-                localStorage.setItem('se_user_session', JSON.stringify(currentUser));
-                updateAuthUI();
-                showTeacherDashboard();
-            } else {
-                alert('密碼錯誤！預設測試密碼為 teacher123');
+            const pass = document.getElementById('teacher-password-input').value.trim();
+            const spinner = document.getElementById('auth-spinner');
+            const loginBtn = document.getElementById('btn-teacher-login');
+
+            if (!gasApiUrl) {
+                alert('請先點擊右上角⚙️設定 GAS API URL 以便進行雲端密碼驗證！');
+                openGasModal();
+                return;
+            }
+
+            spinner.classList.remove('hidden');
+            loginBtn.disabled = true;
+
+            try {
+                const response = await fetch(`${gasApiUrl}?action=verifyTeacherPassword&password=${encodeURIComponent(pass)}`);
+                const data = await response.json();
+
+                if (data.status === 'success' && data.valid) {
+                    currentUser = { role: 'TEACHER', name: '教師/資安官' };
+                    localStorage.setItem('se_user_session', JSON.stringify(currentUser));
+                    updateAuthUI();
+                    showTeacherDashboard();
+                } else {
+                    alert('密碼驗證失敗：密碼不正確！');
+                }
+            } catch (err) {
+                alert('連線 GAS 後端發生錯誤：' + err);
+            } finally {
+                spinner.classList.add('hidden');
+                loginBtn.disabled = false;
             }
         }
 
         function showTeacherDashboard() {
             document.getElementById('teacher-login-gate').classList.add('hidden');
             document.getElementById('teacher-dashboard-panel').classList.remove('hidden');
-            renderAdminTable();
+            syncGasCloudScores();
             loadOfficialAnswerKeys();
         }
 
@@ -979,7 +1073,6 @@
             localStorage.removeItem('se_user_session');
             updateAuthUI();
             
-            // Lock teacher dashboard view
             document.getElementById('teacher-login-gate').classList.remove('hidden');
             document.getElementById('teacher-dashboard-panel').classList.add('hidden');
             
@@ -994,14 +1087,31 @@
             document.getElementById('modal-change-pass').classList.add('hidden');
         }
 
-        function handleChangeTeacherPassword(e) {
+        async function handleChangeTeacherPassword(e) {
             e.preventDefault();
+            const oldPass = document.getElementById('old-teacher-pass').value.trim();
             const newPass = document.getElementById('new-teacher-pass').value.trim();
-            if (newPass) {
-                teacherPassword = newPass;
-                localStorage.setItem('se_teacher_password', newPass);
-                alert('教師密碼已成功更新！');
+
+            if (!gasApiUrl) {
+                alert('尚未設定 GAS API URL');
+                return;
+            }
+
+            try {
+                const res = await fetch(gasApiUrl, {
+                    method: 'POST',
+                    mode: 'no-cors',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        action: 'updateTeacherPassword',
+                        oldPassword: oldPass,
+                        newPassword: newPass
+                    })
+                });
+                alert('已送出更新密碼請求至 GAS 雲端！');
                 closeChangeTeacherPasswordModal();
+            } catch (err) {
+                alert('更新密碼失敗：' + err);
             }
         }
 
@@ -1022,7 +1132,6 @@
                 }
             });
 
-            // Special Teacher Auth Check on tab switch
             if (tabKey === 'teacher') {
                 if (currentUser.role === 'TEACHER') {
                     showTeacherDashboard();
@@ -1094,26 +1203,8 @@
         // ==========================================
         // EMAIL PHISHING SIMULATOR LOGIC
         // ==========================================
-        const scenarios = [
-            {
-                title: "HR 人力資源處 - 2026 年終績效獎金發放通知",
-                isPhishing: true,
-                sender: "hr-bonus@company-hr-rewards-portal.com",
-                realSender: "hr-bonus@company-hr-rewards-portal.com (外部匿名伺服器)",
-                headerInfo: "SPF: FAIL | DKIM: NONE | DMARC: FAIL",
-                subject: "【極重要】2026 年終績效獎金發放核對 - 請於本日 18:00 前完成填報",
-                body: `親愛的同仁您好：<br/><br/>2026 年度年終績效獎金已完成第一階段核算。請立即點擊下方連結登入企業 HR 系統核對個人銀行帳號與考績等第。<br/><br/>若未於本日 18:00 前核對完成，獎金發放將順延至下一季度。<br/><br/>
-                <a href="javascript:void(0)" onclick="inspectHotspot('link')" class="text-blue-600 font-bold underline">👉 [點擊此處] 進入 2026 HR 獎金核對 Portal (http://company-hr-rewards-portal.com/login)</a>`,
-                hotspots: {
-                    sender: "【紅旗警訊】發件者網域 company-hr-rewards-portal.com 為假冒的 Lookalike 網域，非公司官方域名。",
-                    header: "【標頭失敗】SPF 與 DMARC 驗證皆為 FAIL，代表該發件伺服器未獲得授權！",
-                    link: "【超連結危險】超連結指向 HTTP 未加密之外圍釣魚憑證收割網站。"
-                }
-            }
-        ];
-
         function renderScenarioEmail(idx) {
-            const data = scenarios[0];
+            const data = scenarios[idx];
             const target = document.getElementById('email-render-target');
             target.innerHTML = `
                 <div class="space-y-4 text-slate-800">
@@ -1133,11 +1224,13 @@
                     </div>
                 </div>
             `;
+            document.getElementById('verdict-modal-box').classList.add('hidden');
         }
 
         function inspectHotspot(type) {
+            const idx = document.getElementById('scenario-selector').value;
             const feedback = document.getElementById('inspector-feedback-content');
-            const data = scenarios[0].hotspots[type];
+            const data = scenarios[idx].hotspots[type];
             feedback.innerHTML = `
                 <div class="p-4 rounded-xl bg-amber-50 border border-amber-200 text-amber-900 text-xs space-y-2 animate-fade-in shadow-sm">
                     <div class="font-bold text-amber-800 flex items-center gap-1.5">
@@ -1146,27 +1239,29 @@
                     <p class="leading-relaxed">${data}</p>
                 </div>
             `;
-            document.getElementById('simulator-progress-badge').innerText = `已發現熱點: 1 / 3`;
         }
 
         function evaluateScenarioVerdict(userSaysPhishing) {
+            const idx = document.getElementById('scenario-selector').value;
+            const data = scenarios[idx];
             const box = document.getElementById('verdict-modal-box');
             box.classList.remove('hidden');
-            if (userSaysPhishing) {
+
+            if (userSaysPhishing === data.isPhishing) {
                 box.className = 'mt-4 p-4 rounded-xl border bg-emerald-50 border-emerald-300 text-emerald-900 text-xs space-y-1 shadow-sm';
                 box.innerHTML = `
                     <div class="font-bold text-emerald-800 flex items-center gap-2 text-sm">
-                        <i class="fas fa-circle-check text-emerald-600"></i> 回答正確！這是一封標準釣魚郵件。
+                        <i class="fas fa-circle-check text-emerald-600"></i> 判斷正確！
                     </div>
-                    <p>您成功辨識了 Lookalike Domain 與未通過 SPF 驗證的標頭特徵。</p>
+                    <p>您成功識別出該郵件的防禦狀態。</p>
                 `;
             } else {
                 box.className = 'mt-4 p-4 rounded-xl border bg-red-50 border-red-300 text-red-900 text-xs space-y-1 shadow-sm';
                 box.innerHTML = `
                     <div class="font-bold text-red-800 flex items-center gap-2 text-sm">
-                        <i class="fas fa-circle-xmark text-red-600"></i> 判斷錯誤！此郵件包含多個危險紅旗。
+                        <i class="fas fa-circle-xmark text-red-600"></i> 判斷錯誤！
                     </div>
-                    <p>請重新檢查寄件者網域與要求急迫填報的超連結。</p>
+                    <p>請重新點擊發件者與標頭細節進行紅旗分析。</p>
                 `;
             }
         }
@@ -1258,7 +1353,7 @@
 
         function submitExam() {
             if (currentUser.role !== 'STUDENT') {
-                alert('請先登入學員身份後再提交測驗！');
+                alert('請先填寫學員資訊 (班級、座號、姓名) 後再提交測驗！');
                 openStudentLoginModal();
                 return;
             }
@@ -1277,21 +1372,21 @@
 
             const levelTitle = score >= 90 ? "專家級資安防禦者" : (score >= 80 ? "合格資安衛士" : "高風險資安加強對象");
             const record = {
+                action: 'submitQuiz',
                 timestamp: new Date().toLocaleString(),
-                studentId: currentUser.studentId || "N/A",
+                className: currentUser.className || "N/A",
+                seatNumber: currentUser.seatNumber || "N/A",
                 studentName: currentUser.name || "N/A",
-                department: currentUser.department || "N/A",
                 score: score,
-                totalQuestions: 20,
                 levelTitle: levelTitle,
                 incorrectCount: incorrectCount
             };
 
-            // Save Local
+            // 儲存至本地快取
             gradeRecords.unshift(record);
             localStorage.setItem('se_grade_records', JSON.stringify(gradeRecords));
 
-            // Post to GAS if configured
+            // 自動 POST 提交至 Google Apps Script 試算表
             if (gasApiUrl) {
                 fetch(gasApiUrl, {
                     method: 'POST',
@@ -1301,7 +1396,7 @@
                 }).catch(err => console.error('GAS Post Error:', err));
             }
 
-            // Render Result Certificate Modal
+            // 顯示評量結果卡片
             const certModal = document.getElementById('exam-certificate-modal');
             certModal.classList.remove('hidden');
             certModal.innerHTML = `
@@ -1310,15 +1405,15 @@
                         <i class="fas ${score >= 80 ? 'fa-award' : 'fa-triangle-exclamation'}"></i>
                     </div>
                     <div>
-                        <h3 class="text-2xl font-extrabold text-slate-900">${record.studentName} 同仁測驗完成！</h3>
-                        <p class="text-xs text-slate-500 mt-1">成績已自動寫入評量系統庫</p>
+                        <h3 class="text-2xl font-extrabold text-slate-900">${record.className} ${record.seatNumber}號 ${record.studentName} 同仁測驗完成！</h3>
+                        <p class="text-xs text-slate-500 mt-1">成績已自動同步寫入 Google Apps Script 雲端試算表</p>
                     </div>
                     <div class="text-4xl font-extrabold font-mono ${score >= 80 ? 'text-emerald-600' : 'text-red-600'}">${score} <span class="text-xs text-slate-500 font-sans">/ 100 分</span></div>
                     <div class="inline-block px-4 py-1.5 rounded-full ${score >= 80 ? 'bg-emerald-100 text-emerald-800' : 'bg-red-100 text-red-800'} text-xs font-bold">
                         防禦等級評定：${levelTitle}
                     </div>
                     <div class="pt-4 flex justify-center">
-                        <button onclick="switchTab('teacher')" class="px-6 py-2.5 bg-purple-600 text-white font-bold rounded-xl text-xs shadow hover:bg-purple-700">前往教師後台檢視班級總表</button>
+                        <button onclick="switchTab('teacher')" class="px-6 py-2.5 bg-purple-600 text-white font-bold rounded-xl text-xs shadow hover:bg-purple-700">前往教師後台檢視全班成績表</button>
                     </div>
                 </div>
             `;
@@ -1330,20 +1425,19 @@
         function renderAdminTable() {
             const tbody = document.getElementById('admin-table-body');
             const searchVal = document.getElementById('admin-search-input').value.toLowerCase();
-            const deptVal = document.getElementById('admin-dept-filter').value;
 
             const filtered = gradeRecords.filter(r => {
-                const matchSearch = r.studentName.toLowerCase().includes(searchVal) || r.studentId.toLowerCase().includes(searchVal);
-                const matchDept = (deptVal === 'ALL') || (r.department === deptVal);
-                return matchSearch && matchDept;
+                return (r.studentName || '').toLowerCase().includes(searchVal) || 
+                       (r.className || '').toLowerCase().includes(searchVal) ||
+                       (r.seatNumber || '').toString().includes(searchVal);
             });
 
             // Update KPI Metrics
             const total = gradeRecords.length;
-            const avg = total > 0 ? (gradeRecords.reduce((a, b) => a + b.score, 0) / total).toFixed(1) : 0;
-            const passCount = gradeRecords.filter(r => r.score >= 80).length;
+            const avg = total > 0 ? (gradeRecords.reduce((a, b) => a + Number(b.score), 0) / total).toFixed(1) : 0;
+            const passCount = gradeRecords.filter(r => Number(r.score) >= 80).length;
             const passRate = total > 0 ? ((passCount / total) * 100).toFixed(0) : 0;
-            const highRiskCount = gradeRecords.filter(r => r.score < 60).length;
+            const highRiskCount = gradeRecords.filter(r => Number(r.score) < 60).length;
             const highRiskRate = total > 0 ? ((highRiskCount / total) * 100).toFixed(0) : 0;
 
             document.getElementById('kpi-total-takers').innerText = total;
@@ -1352,28 +1446,50 @@
             document.getElementById('kpi-high-risk').innerText = `${highRiskRate}%`;
 
             if (filtered.length === 0) {
-                tbody.innerHTML = `<tr><td colspan="6" class="py-8 text-center text-slate-400 text-xs">無符合條件之成績紀錄</td></tr>`;
+                tbody.innerHTML = `<tr><td colspan="7" class="py-8 text-center text-slate-400 text-xs">無符合條件之成績紀錄</td></tr>`;
                 return;
             }
 
             tbody.innerHTML = filtered.map(r => `
                 <tr class="hover:bg-slate-50 transition">
-                    <td class="py-3 px-4 font-bold text-slate-900">${r.studentName} <span class="text-slate-400 font-normal font-mono text-[11px]">(${r.studentId})</span></td>
-                    <td class="py-3 px-4 text-slate-600">${r.department}</td>
-                    <td class="py-3 px-4 font-mono font-bold ${r.score >= 80 ? 'text-emerald-600' : 'text-red-600'}">${r.score} 分</td>
-                    <td class="py-3 px-4"><span class="px-2 py-0.5 rounded text-[11px] font-bold ${r.score >= 80 ? 'bg-emerald-100 text-emerald-800' : 'bg-red-100 text-red-800'}">${r.score >= 80 ? '及格' : '高風險需補考'}</span></td>
+                    <td class="py-3 px-4 font-bold text-slate-900">${r.className || 'N/A'}</td>
+                    <td class="py-3 px-4 text-slate-600 font-mono">${r.seatNumber || 'N/A'}</td>
+                    <td class="py-3 px-4 font-bold text-blue-700">${r.studentName || 'N/A'}</td>
+                    <td class="py-3 px-4 font-mono font-bold ${Number(r.score) >= 80 ? 'text-emerald-600' : 'text-red-600'}">${r.score} 分</td>
+                    <td class="py-3 px-4"><span class="px-2 py-0.5 rounded text-[11px] font-bold ${Number(r.score) >= 80 ? 'bg-emerald-100 text-emerald-800' : 'bg-red-100 text-red-800'}">${Number(r.score) >= 80 ? '及格' : '高風險需補考'}</span></td>
                     <td class="py-3 px-4 text-slate-500 font-mono text-[11px]">${r.timestamp}</td>
-                    <td class="py-3 px-4 text-center"><button onclick="alert('學員: ${r.studentName}\\n答錯題數: ${r.incorrectCount} 題\\n評定: ${r.levelTitle}')" class="text-blue-600 hover:underline font-bold text-xs">詳情</button></td>
+                    <td class="py-3 px-4 text-center"><button onclick="alert('學員: ${r.className} ${r.seatNumber}號 ${r.studentName}\\n答錯題數: ${r.incorrectCount || 0} 題\\n評定: ${r.levelTitle}')" class="text-blue-600 hover:underline font-bold text-xs">詳情</button></td>
                 </tr>
             `).join('');
         }
 
-        function loadOfficialAnswerKeys() {
+        /**
+         * 從 GAS 載入官方標準解答
+         */
+        async function loadOfficialAnswerKeys() {
             const container = document.getElementById('teacher-answer-keys-display');
+            
+            if (gasApiUrl) {
+                try {
+                    const res = await fetch(`${gasApiUrl}?action=getAnswerKeys`);
+                    const resData = await res.json();
+                    if (resData.status === 'success' && resData.data) {
+                        container.innerHTML = resData.data.map(q => `
+                            <div class="p-4 rounded-xl bg-purple-50 border border-purple-200 space-y-1">
+                                <div class="font-bold text-purple-900">題目 ${q.id}</div>
+                                <div class="text-xs text-purple-700 font-semibold">${q.ans}</div>
+                            </div>
+                        `).join('');
+                        return;
+                    }
+                } catch(e) { console.warn('GAS Answers fetch error', e); }
+            }
+
+            // Fallback
             container.innerHTML = quizQuestions.map(q => `
-                <div class="p-4 rounded-xl bg-slate-50 border border-slate-200 space-y-1.5">
+                <div class="p-4 rounded-xl bg-slate-50 border border-slate-200 space-y-1">
                     <div class="font-bold text-slate-900">Q${q.id}. ${q.q}</div>
-                    <div class="text-purple-700 font-bold">正確答案：(${q.ans + 1}) ${q.options[q.ans]}</div>
+                    <div class="text-purple-700 font-bold">正確解答：(${q.ans + 1}) ${q.options[q.ans]}</div>
                 </div>
             `).join('');
         }
@@ -1383,9 +1499,9 @@
                 alert('目前無可匯出的成績資料');
                 return;
             }
-            let csvContent = "data:text/csv;charset=utf-8,\uFEFFTimestamp,Student ID,Name,Department,Score,Level\n";
+            let csvContent = "data:text/csv;charset=utf-8,\uFEFFTimestamp,Class,SeatNumber,StudentName,Score,Level\n";
             gradeRecords.forEach(r => {
-                csvContent += `"${r.timestamp}","${r.studentId}","${r.studentName}","${r.department}","${r.score}","${r.levelTitle}"\n`;
+                csvContent += `"${r.timestamp}","${r.className}","${r.seatNumber}","${r.studentName}","${r.score}","${r.levelTitle}"\n`;
             });
             const encodedUri = encodeURI(csvContent);
             const link = document.createElement("a");
@@ -1397,7 +1513,7 @@
         }
 
         function clearGradeRecords() {
-            if (confirm('確定要清空本地所有成績紀錄嗎？')) {
+            if (confirm('確定要清空本地快取的成績紀錄嗎？')) {
                 gradeRecords = [];
                 localStorage.removeItem('se_grade_records');
                 renderAdminTable();
@@ -1426,11 +1542,11 @@
         function updateGasStatusUI() {
             const label = document.getElementById('gas-status-label');
             if (gasApiUrl) {
-                label.innerText = '已連線 (GAS Dynamic Sync)';
+                label.innerText = '已連線 (GAS Cloud Auth Ready)';
                 label.className = 'font-bold text-emerald-600';
             } else {
-                label.innerText = 'LocalStorage 模式 (未設定 API)';
-                label.className = 'font-bold text-slate-600';
+                label.innerText = 'LocalStorage 模式 (請設定 GAS URL)';
+                label.className = 'font-bold text-amber-600';
             }
         }
 
