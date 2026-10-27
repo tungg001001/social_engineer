@@ -583,7 +583,7 @@
       { id: 17, q: "攻擊者先刻意使企業系統發生異常故障，再偽裝為技術支援人員主動聯繫協助排除，進而索取高權限帳密，這屬於？", options: ["A. 反向社交工程 (Reverse Social Engineering)", "B. Shoulder Surfing", "C. SIM Swapping", "D. Quishing"], ans: "A", exp: "反向社交工程透過先製造問題再扮演救星，使受害者主動提供控制權與敏感資訊。" },
       { id: 18, q: "辦公室棄置的未碎紙公務文件、客戶清單被有心人士從廢紙桶中拾獲並拼湊利用，這稱為？", options: ["A. 垃圾搜尋 (Dumpster Diving)", "B. Tailgating", "C. Vishing", "D. BadUSB"], ans: "A", exp: "垃圾搜尋係從未銷毀的垃圾中尋找機密資訊，防禦關鍵在於使用高規格碎紙機與實施廢紙安全回收。" },
       { id: 19, q: "關於 Domain 網域鑑別，下列哪一個網域最可能是偽造的 Lookalike Domain (相似網域)？", options: ["A. login.microsoft.com", "B. accounts.google.com", "C. security-update-microsoftonline.xyz", "D. www.gov.tw"], ans: "C", exp: "包含冗長拼湊字眼且使用 .xyz 等非官方頂級域名的 URL，通常為攻擊者註冊之釣魚網域。" },
-      { id: 20, q: "發現自己不小心點擊了疑慮釣魚郵件連結並輸入了公務帳密，第一時間正確的處置流程為？", options: ["A. 裝作沒事繼續工作", "B. 財務或 IT 單位通報，並立即更改該帳號密碼與開啟全盤清查", "C. 直接將電腦關機並請假", "D. 刪除該郵件以泯滅證據"], ans: "B", exp: "通報資安團隊並區域更換憑證，能讓 SOC 團隊在第一時間阻斷攻擊鏈擴大損害。" }
+      { id: 20, q: "發現自己不小心點擊了疑慮釣魚郵件連結並輸入了公務帳密，第一時間正確的處置流程為？", options: ["A. 裝作沒事繼續工作", "B. 通報資安或 IT 單位，並立即更改該帳號密碼與開啟全盤清查", "C. 直接將電腦關機並請假", "D. 刪除該郵件以泯滅證據"], ans: "B", exp: "通報資安團隊並立即更換憑證，能讓 SOC 團隊在第一時間阻斷攻擊鏈擴大損害。" }
     ];
 
     let activePhishingIndex = 0;
@@ -1097,7 +1097,7 @@
       try {
         const payload = {
           action: "submitScore",
-          timestamp: new Date().toLocaleString('zh-TW'),
+          timestamp: new Date().toISOString(),
           className: currentStudent.className,
           seatNo: currentStudent.seatNo,
           studentName: currentStudent.studentName,
@@ -1153,9 +1153,9 @@
       } catch (err) {
         // Fallback demo data if fetch fails
         scoresData = [
-          { timestamp: "2026/10/27 09:30", className: "資管二A", seatNo: "01", studentName: "王小明", score: 85, rankTitle: "資安特勤衛士 (Level 4)", wrongCount: 3 },
-          { timestamp: "2026/10/27 10:15", className: "資管二A", seatNo: "02", studentName: "陳大天", score: 55, rankTitle: "高風險受害者 (Level 2)", wrongCount: 9 },
-          { timestamp: "2026/10/27 11:00", className: "高一甲", seatNo: "12", studentName: "林小華", score: 95, rankTitle: "資安防禦大師 (Level 5)", wrongCount: 1 }
+          { timestamp: "2026-10-27T04:03:41.000Z", className: "資管二A", seatNo: "01", studentName: "王小明", score: 85, rankTitle: "資安特勤衛士 (Level 4)", wrongCount: 3 },
+          { timestamp: "2026-10-27T05:31:51.000Z", className: "資管二A", seatNo: "02", studentName: "陳大天", score: 55, rankTitle: "高風險受害者 (Level 2)", wrongCount: 9 },
+          { timestamp: "2026-10-27T06:08:41.000Z", className: "高一甲", seatNo: "12", studentName: "林小華", score: 95, rankTitle: "資安防禦大師 (Level 5)", wrongCount: 1 }
         ];
         renderTeacherDashboard(scoresData);
       }
@@ -1164,9 +1164,9 @@
     function renderTeacherDashboard(data) {
       // KPI Calculations
       const total = data.length;
-      const sumScore = data.reduce((acc, curr) => acc + Number(curr.score), 0);
+      const sumScore = data.reduce((acc, curr) => acc + Number(curr.score || 0), 0);
       const avg = total > 0 ? (sumScore / total).toFixed(1) : 0;
-      const passCount = data.filter(d => Number(d.score) >= 70).length;
+      const passCount = data.filter(d => Number(d.score || 0) >= 70).length;
       const passRate = total > 0 ? ((passCount / total) * 100).toFixed(0) : 0;
       const riskRate = total > 0 ? (100 - passRate).toFixed(0) : 0;
 
@@ -1178,27 +1178,56 @@
       document.getElementById('teacher-record-count').innerText = `共 ${total} 筆紀錄`;
 
       const tbody = document.getElementById('teacher-tbody');
-      tbody.innerHTML = data.map((row, i) => `
-        <tr class="hover:bg-slate-50 transition">
-          <td class="px-4 py-3 font-mono text-slate-500">${row.timestamp || '-'}</td>
-          <td class="px-4 py-3 font-bold text-slate-800">${row.className || '-'}</td>
-          <td class="px-4 py-3 text-slate-600">${row.seatNo || '-'}</td>
-          <td class="px-4 py-3 font-bold text-slate-900">${row.studentName || '-'}</td>
-          <td class="px-4 py-3 font-black ${Number(row.score) >= 70 ? 'text-emerald-600' : 'text-red-500'}">${row.score}</td>
-          <td class="px-4 py-3 text-slate-600">${row.rankTitle || '-'}</td>
-          <td class="px-4 py-3 text-slate-600">${row.wrongCount} 題</td>
-          <td class="px-4 py-3">
-            <span class="px-2 py-0.5 rounded-full text-[10px] font-bold ${Number(row.score) >= 70 ? 'bg-emerald-100 text-emerald-800' : 'bg-red-100 text-red-800'}">
-              ${Number(row.score) >= 70 ? '合格' : '需補測'}
-            </span>
-          </td>
-          <td class="px-4 py-3 text-center">
-            <button onclick="deleteRecordGAS(${i})" class="text-red-500 hover:text-red-700 transition">
-              <i class="fa-solid fa-trash-can"></i>
-            </button>
-          </td>
-        </tr>
-      `).join('');
+      tbody.innerHTML = data.map((row, i) => {
+        const scoreNum = Number(row.score || 0);
+
+        // 1. 自動計算與相容答錯題數
+        let wrong = row.wrongCount !== undefined ? row.wrongCount : (row.wrong !== undefined ? row.wrong : (20 - Math.floor(scoreNum / 5)));
+        
+        // 2. 自動計算與相容資安頭銜
+        let rank = row.rankTitle || row.rank || row.rank_title;
+        if (!rank || rank === '-') {
+          if (scoreNum >= 90) rank = "資安防禦大師 (Level 5)";
+          else if (scoreNum >= 75) rank = "資安特勤衛士 (Level 4)";
+          else if (scoreNum >= 60) rank = "合格防禦員 (Level 3)";
+          else if (scoreNum >= 40) rank = "高風險受害者 (Level 2)";
+          else rank = "極度危險黑洞 (Level 1)";
+        }
+
+        // 3. 轉換時間戳記為台灣時間 (Asia/Taipei)
+        let formattedTime = '-';
+        const rawTime = row.timestamp || row.Time || row.date;
+        if (rawTime) {
+          const dateObj = new Date(rawTime);
+          if (!isNaN(dateObj.getTime())) {
+            formattedTime = dateObj.toLocaleString('zh-TW', { timeZone: 'Asia/Taipei', hour12: false });
+          } else {
+            formattedTime = rawTime;
+          }
+        }
+
+        return `
+          <tr class="hover:bg-slate-50 transition">
+            <td class="px-4 py-3 font-mono text-slate-500 whitespace-nowrap">${formattedTime}</td>
+            <td class="px-4 py-3 font-bold text-slate-800">${row.className || row.class || '-'}</td>
+            <td class="px-4 py-3 text-slate-600">${row.seatNo || row.seat || '-'}</td>
+            <td class="px-4 py-3 font-bold text-slate-900">${row.studentName || row.name || '-'}</td>
+            <td class="px-4 py-3 font-black ${scoreNum >= 70 ? 'text-emerald-600' : 'text-red-500'}">${scoreNum}</td>
+            <td class="px-4 py-3 text-slate-600">${rank}</td>
+            <td class="px-4 py-3 text-slate-600">${wrong} 題</td>
+            <td class="px-4 py-3">
+              <span class="px-2 py-0.5 rounded-full text-[10px] font-bold ${scoreNum >= 70 ? 'bg-emerald-100 text-emerald-800' : 'bg-red-100 text-red-800'}">
+                ${scoreNum >= 70 ? '合格' : '需補測'}
+              </span>
+            </td>
+            <td class="px-4 py-3 text-center">
+              <button onclick="deleteRecordGAS(${i})" class="text-red-500 hover:text-red-700 transition">
+                <i class="fa-solid fa-trash-can"></i>
+              </button>
+            </td>
+          </tr>
+        `;
+      }).join('');
     }
 
     function filterTeacherTable() {
@@ -1233,7 +1262,24 @@
 
       let csv = "\uFEFF時間戳記,班級,座號,姓名,得分,資安頭銜,答錯題數\n";
       scoresData.forEach(r => {
-        csv += `"${r.timestamp}","${r.className}","${r.seatNo}","${r.studentName}","${r.score}","${r.rankTitle}","${r.wrongCount}"\n`;
+        let formattedTime = r.timestamp || '';
+        if (formattedTime) {
+          const d = new Date(formattedTime);
+          if (!isNaN(d.getTime())) {
+            formattedTime = d.toLocaleString('zh-TW', { timeZone: 'Asia/Taipei', hour12: false });
+          }
+        }
+        const scoreNum = Number(r.score || 0);
+        const wrong = r.wrongCount !== undefined ? r.wrongCount : (20 - Math.floor(scoreNum / 5));
+        let rank = r.rankTitle || '-';
+        if (rank === '-') {
+          if (scoreNum >= 90) rank = "資安防禦大師 (Level 5)";
+          else if (scoreNum >= 75) rank = "資安特勤衛士 (Level 4)";
+          else if (scoreNum >= 60) rank = "合格防禦員 (Level 3)";
+          else if (scoreNum >= 40) rank = "高風險受害者 (Level 2)";
+          else rank = "極度危險黑洞 (Level 1)";
+        }
+        csv += `"${formattedTime}","${r.className || ''}","${r.seatNo || ''}","${r.studentName || ''}","${scoreNum}","${rank}","${wrong}"\n`;
       });
 
       const blob = new Blob([csv], { type: 'text/csv;charset=utf-8;' });
