@@ -263,55 +263,50 @@
       </div>
     </div>
 
-    <!-- Tab 4: 20題綜合測驗 -->
+    <!-- Tab 4: 20題綜合測驗 (全數一頁展現模式) -->
     <div id="tab-exam" class="tab-content hidden">
-      <div id="exam-start-card" class="bg-white rounded-xl border border-slate-200 p-8 shadow-sm max-w-2xl mx-auto text-center">
-        <div class="w-16 h-16 bg-brand-50 text-brand-600 rounded-full flex items-center justify-center mx-auto mb-4 text-2xl">
-          <i class="fa-solid fa-clipboard-check"></i>
-        </div>
-        <h2 class="text-2xl font-bold text-slate-900 mb-2">社交工程與資安防禦 20 題綜合實務測驗</h2>
-        <p class="text-sm text-slate-600 mb-6 max-w-lg mx-auto">本測驗共 20 題，涵蓋 Smishing、BEC、Quishing、MFA 疲勞攻擊、Lookalike Domain 等實務情境。完成後成績將自動上傳至教務系統。</p>
-
-        <!-- Student Profile Input -->
-        <div class="bg-slate-50 rounded-xl p-5 text-left border border-slate-200 mb-6 space-y-3">
-          <h3 class="text-xs font-bold text-slate-700 uppercase tracking-wider mb-2">受測學生身分確認</h3>
-          <div class="grid grid-cols-1 sm:grid-cols-3 gap-3">
-            <div>
-              <label class="block text-xs font-semibold text-slate-600 mb-1">班級 *</label>
-              <input type="text" id="exam-class" placeholder="如：高一甲 / 資管二A" class="w-full text-sm border border-slate-300 rounded-lg px-3 py-2 focus:ring-2 focus:ring-brand-500 focus:outline-none">
-            </div>
-            <div>
-              <label class="block text-xs font-semibold text-slate-600 mb-1">座號 *</label>
-              <input type="text" id="exam-seat" placeholder="如：05" class="w-full text-sm border border-slate-300 rounded-lg px-3 py-2 focus:ring-2 focus:ring-brand-500 focus:outline-none">
-            </div>
-            <div>
-              <label class="block text-xs font-semibold text-slate-600 mb-1">姓名 *</label>
-              <input type="text" id="exam-name" placeholder="如：王小明" class="w-full text-sm border border-slate-300 rounded-lg px-3 py-2 focus:ring-2 focus:ring-brand-500 focus:outline-none">
+      <!-- 測驗填寫個人資料與全題目卡片 -->
+      <div id="exam-full-card" class="bg-white rounded-xl border border-slate-200 p-6 md:p-8 shadow-sm max-w-4xl mx-auto space-y-8">
+        
+        <!-- 標題與學員資料 -->
+        <div class="border-b border-slate-200 pb-6 text-center">
+          <div class="w-16 h-16 bg-brand-50 text-brand-600 rounded-full flex items-center justify-center mx-auto mb-3 text-2xl">
+            <i class="fa-solid fa-clipboard-check"></i>
+          </div>
+          <h2 class="text-2xl font-bold text-slate-900">社交工程與資安防禦 20 題綜合實務測驗</h2>
+          <p class="text-sm text-slate-600 mt-1">本測驗共 20 題（一頁展現作答）。完成後成績將自動儲存並同步上傳至 Google 雲端試算表。</p>
+          
+          <div class="bg-slate-50 rounded-xl p-5 text-left border border-slate-200 mt-6">
+            <h3 class="text-xs font-bold text-slate-700 uppercase tracking-wider mb-3 flex items-center">
+              <i class="fa-solid fa-id-card text-brand-600 mr-2"></i>受測學員資料填寫 (必填)
+            </h3>
+            <div class="grid grid-cols-1 sm:grid-cols-3 gap-4">
+              <div>
+                <label class="block text-xs font-semibold text-slate-600 mb-1">班級 *</label>
+                <input type="text" id="exam-class" placeholder="如：高一甲 / 資管二A" class="w-full text-sm border border-slate-300 rounded-lg px-3 py-2 focus:ring-2 focus:ring-brand-500 focus:outline-none">
+              </div>
+              <div>
+                <label class="block text-xs font-semibold text-slate-600 mb-1">座號 *</label>
+                <input type="text" id="exam-seat" placeholder="如：05" class="w-full text-sm border border-slate-300 rounded-lg px-3 py-2 focus:ring-2 focus:ring-brand-500 focus:outline-none">
+              </div>
+              <div>
+                <label class="block text-xs font-semibold text-slate-600 mb-1">姓名 *</label>
+                <input type="text" id="exam-name" placeholder="如：王小明" class="w-full text-sm border border-slate-300 rounded-lg px-3 py-2 focus:ring-2 focus:ring-brand-500 focus:outline-none">
+              </div>
             </div>
           </div>
         </div>
 
-        <button onclick="startExam()" class="w-full sm:w-auto px-8 py-3 bg-brand-600 hover:bg-brand-700 text-white font-semibold rounded-lg shadow-md transition">
-          開始測驗 (20 題)
-        </button>
-      </div>
-
-      <!-- Exam Active Area -->
-      <div id="exam-active-card" class="hidden bg-white rounded-xl border border-slate-200 p-6 md:p-8 shadow-sm max-w-3xl mx-auto">
-        <div class="flex items-center justify-between border-b border-slate-200 pb-4 mb-6">
-          <span class="text-xs font-semibold text-brand-600 bg-brand-50 px-3 py-1 rounded-full" id="exam-progress-badge">題目 1 / 20</span>
-          <span class="text-xs text-slate-500" id="exam-student-identity-display">學員: -</span>
+        <!-- 20 題一次展開渲染區塊 -->
+        <div id="exam-questions-list" class="space-y-6">
+          <!-- 20 題由 JS 動態生成 -->
         </div>
 
-        <h3 class="text-lg font-bold text-slate-900 mb-6" id="exam-question-title">載入中...</h3>
-
-        <div class="space-y-3 mb-8" id="exam-options-container">
-          <!-- Dynamic Options -->
-        </div>
-
-        <div class="flex justify-between items-center border-t border-slate-200 pt-6">
-          <button onclick="prevQuestion()" id="exam-prev-btn" class="px-4 py-2 text-sm font-medium text-slate-600 bg-slate-100 hover:bg-slate-200 rounded-lg transition disabled:opacity-50">上一題</button>
-          <button onclick="nextQuestion()" id="exam-next-btn" class="px-6 py-2 text-sm font-medium text-white bg-brand-600 hover:bg-brand-700 rounded-lg transition">下一題</button>
+        <!-- 提交按鈕 -->
+        <div class="border-t border-slate-200 pt-6 text-center">
+          <button onclick="submitExamAll()" class="w-full sm:w-auto px-10 py-3.5 bg-brand-600 hover:bg-brand-700 text-white font-bold text-base rounded-xl shadow-lg transition">
+            <i class="fa-solid fa-paper-plane mr-2"></i>提交 20 題測驗並傳送成績
+          </button>
         </div>
       </div>
 
@@ -449,7 +444,7 @@
     // DATA & GLOBAL STATE
     // ==========================================
 
-    // GAS API Endpoint URL (已預先填入您的專屬 GAS URL)
+    // GAS API Endpoint URL (已預先寫入您的專屬 GAS URL)
     let gasApiUrl = localStorage.getItem('social_eng_gas_url') || 'https://script.google.com/macros/s/AKfycbwCrwPtY0-3-LfGHJj6I_oSk1pt1fwYHElNSRzUvr1fsq7WIwyZxautHNpG6-IeDTV33Q/exec';
 
     // Active User State
@@ -611,7 +606,6 @@
     let currentPhishingIdx = 0;
     let currentSandboxIdx = 0;
     let examUserAnswers = {};
-    let examCurrentQ = 0;
     let teacherAnswerKeys = null;
     let localScoresList = JSON.parse(localStorage.getItem('social_eng_scores')) || [];
 
@@ -625,6 +619,7 @@
       renderPhishingSelector();
       renderPhishingTemplate(0);
       renderSandboxPortal(0);
+      renderAllExamQuestions();
     };
 
     function switchTab(tabId) {
@@ -974,74 +969,61 @@
     }
 
     // ==========================================
-    // MODULE 4: 20-QUESTION EXAM ENGINE
+    // MODULE 4: 20-QUESTION EXAM ENGINE (FULL VIEW)
     // ==========================================
-    function startExam() {
-      const cls = document.getElementById('exam-class').value.trim();
-      const seat = document.getElementById('exam-seat').value.trim();
-      const name = document.getElementById('exam-name').value.trim();
-
-      if (!cls || !seat || !name) {
-        alert("請完整填寫班級、座號與姓名！");
-        return;
-      }
-
-      currentUser = { role: 'student', className: cls, seatNo: seat, name: name };
-      localStorage.setItem('social_eng_current_user', JSON.stringify(currentUser));
-      renderUserSessionBadge();
-
-      examCurrentQ = 0;
-      examUserAnswers = {};
-
-      document.getElementById('exam-start-card').classList.add('hidden');
-      document.getElementById('exam-active-card').classList.remove('hidden');
-      renderExamQuestion();
-    }
-
-    function renderExamQuestion() {
-      const qData = examQuestions[examCurrentQ];
-      document.getElementById('exam-progress-badge').innerText = `題目 ${examCurrentQ + 1} / 20`;
-      document.getElementById('exam-student-identity-display').innerText = `學員: ${currentUser.className} | ${currentUser.seatNo}號 ${currentUser.name}`;
-      document.getElementById('exam-question-title').innerText = `${qData.id}. ${qData.q}`;
-
-      const optionsContainer = document.getElementById('exam-options-container');
-      optionsContainer.innerHTML = qData.options.map((opt, idx) => `
-        <label class="flex items-center p-3.5 border rounded-lg cursor-pointer transition ${examUserAnswers[qData.id] === idx ? 'border-brand-600 bg-brand-50/50 ring-1 ring-brand-500' : 'border-slate-200 hover:bg-slate-50'}">
-          <input type="radio" name="exam-option" value="${idx}" ${examUserAnswers[qData.id] === idx ? 'checked' : ''} onchange="selectExamOption(${qData.id}, ${idx})" class="w-4 h-4 text-brand-600 border-slate-300 focus:ring-brand-500">
-          <span class="ml-3 text-sm text-slate-800 font-medium">${opt}</span>
-        </label>
+    function renderAllExamQuestions() {
+      const listContainer = document.getElementById('exam-questions-list');
+      listContainer.innerHTML = examQuestions.map((qData, qIdx) => `
+        <div class="bg-slate-50 border border-slate-200 rounded-xl p-5 space-y-3">
+          <div class="flex items-start space-x-3">
+            <span class="px-2.5 py-1 bg-brand-600 text-white font-bold text-xs rounded-lg">${qIdx + 1}</span>
+            <h3 class="text-base font-bold text-slate-900 leading-snug">${qData.q}</h3>
+          </div>
+          <div class="grid grid-cols-1 sm:grid-cols-2 gap-2.5 pt-2 pl-2">
+            ${qData.options.map((opt, optIdx) => `
+              <label class="flex items-center p-3 border border-slate-200 bg-white rounded-lg cursor-pointer hover:border-brand-500 hover:bg-brand-50/30 transition">
+                <input type="radio" name="exam-q-${qData.id}" value="${optIdx}" onchange="selectExamOption(${qData.id}, ${optIdx})" class="w-4 h-4 text-brand-600 border-slate-300 focus:ring-brand-500">
+                <span class="ml-2.5 text-xs font-medium text-slate-800">${opt}</span>
+              </label>
+            `).join('')}
+          </div>
+        </div>
       `).join('');
-
-      document.getElementById('exam-prev-btn').disabled = examCurrentQ === 0;
-      document.getElementById('exam-next-btn').innerText = examCurrentQ === 19 ? "完成並提交測驗" : "下一題";
     }
 
     function selectExamOption(qId, optionIdx) {
       examUserAnswers[qId] = optionIdx;
     }
 
-    function prevQuestion() {
-      if (examCurrentQ > 0) {
-        examCurrentQ--;
-        renderExamQuestion();
-      }
-    }
+    async function submitExamAll() {
+      const cls = document.getElementById('exam-class').value.trim();
+      const seat = document.getElementById('exam-seat').value.trim();
+      const name = document.getElementById('exam-name').value.trim();
 
-    function nextQuestion() {
-      if (examUserAnswers[examQuestions[examCurrentQ].id] === undefined) {
-        alert("請選擇一個選項再繼續！");
+      if (!cls || !seat || !name) {
+        alert("請填寫受測學員的「班級」、「座號」與「姓名」！");
+        window.scrollTo({ top: 0, behavior: 'smooth' });
         return;
       }
 
-      if (examCurrentQ < 19) {
-        examCurrentQ++;
-        renderExamQuestion();
-      } else {
-        submitExam();
-      }
-    }
+      // Check if all 20 questions are answered
+      let unansweredCount = 0;
+      examQuestions.forEach(q => {
+        if (examUserAnswers[q.id] === undefined) {
+          unansweredCount++;
+        }
+      });
 
-    async function submitExam() {
+      if (unansweredCount > 0) {
+        if (!confirm(`您還有 ${unansweredCount} 題尚未作答，確定要直接提交嗎？`)) {
+          return;
+        }
+      }
+
+      currentUser = { role: 'student', className: cls, seatNo: seat, name: name };
+      localStorage.setItem('social_eng_current_user', JSON.stringify(currentUser));
+      renderUserSessionBadge();
+
       let score = 0;
       let incorrectCount = 0;
 
@@ -1089,7 +1071,7 @@
       }
 
       // Render Result Certificate View
-      document.getElementById('exam-active-card').classList.add('hidden');
+      document.getElementById('exam-full-card').classList.add('hidden');
       const resultCard = document.getElementById('exam-result-card');
       resultCard.classList.remove('hidden');
 
@@ -1097,13 +1079,13 @@
         <div class="w-16 h-16 rounded-full ${score >= 70 ? 'bg-emerald-100 text-emerald-600' : 'bg-red-100 text-red-600'} flex items-center justify-center mx-auto mb-4 text-3xl">
           <i class="fa-solid ${score >= 70 ? 'fa-award' : 'fa-triangle-exclamation'}"></i>
         </div>
-        <h2 class="text-2xl font-bold text-slate-900 mb-1">測驗完成！分數：${score} / 100</h2>
-        <p class="text-xs text-slate-500 mb-6">受測同仁：${currentUser.className} | ${currentUser.seatNo}號 ${currentUser.name}</p>
+        <h2 class="text-2xl font-bold text-slate-900 mb-1">測驗完成！總得分：${score} / 100</h2>
+        <p class="text-xs text-slate-500 mb-6">受測學員：${currentUser.className} | ${currentUser.seatNo}號 ${currentUser.name}</p>
 
         <div class="bg-slate-50 border border-slate-200 rounded-xl p-6 mb-6">
           <span class="text-xs font-semibold text-slate-500 uppercase tracking-wider">評定資安等級頭銜</span>
           <div class="text-xl font-bold ${score >= 70 ? 'text-emerald-600' : 'text-red-600'} mt-1">${levelTitle}</div>
-          <p class="text-xs text-slate-600 mt-2">答對 ${score/5} 題，答錯 ${incorrectCount} 題。成績已登錄至雲端系統。</p>
+          <p class="text-xs text-slate-600 mt-2">答對 ${score/5} 題，答錯 ${incorrectCount} 題。成績已順利上傳至 Google 試算表。</p>
         </div>
 
         <button onclick="location.reload()" class="px-6 py-2.5 bg-brand-600 hover:bg-brand-700 text-white font-semibold text-xs rounded-lg shadow-sm transition">
