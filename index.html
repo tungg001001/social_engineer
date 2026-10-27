@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>企業/學校 社交工程防禦與實作演練平台</title>
+  <title>企業/學校 社交工程防禦與實作演練平台 (20大向量版)</title>
   <script src="https://cdn.tailwindcss.com"></script>
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
   <script>
@@ -44,10 +44,6 @@
       background-color: #fef3c7;
       outline: 2px dashed #f59e0b;
     }
-    .hotspot-active {
-      background-color: #fee2e2 !important;
-      outline: 2px solid #ef4444 !important;
-    }
     .custom-scrollbar::-webkit-scrollbar {
       width: 6px;
       height: 6px;
@@ -86,20 +82,19 @@
           <span>設定 GAS API URL</span>
         </button>
 
-        <!-- Dynamic User Status Badge & Auth Actions -->
         <div id="user-session-badge" class="flex items-center space-x-2">
-          <!-- Rendered via JS -->
+          <!-- Dynamic User Status -->
         </div>
       </div>
     </div>
   </header>
 
-  <!-- Main Navigation Tabs -->
+  <!-- Navigation Bar -->
   <nav class="bg-white border-b border-slate-200 shadow-2xs">
     <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex space-x-8 overflow-x-auto custom-scrollbar">
       <button onclick="switchTab('knowledge')" id="nav-knowledge" class="nav-tab py-3.5 px-1 border-b-2 font-medium text-sm flex items-center space-x-2 whitespace-nowrap border-brand-600 text-brand-600">
         <i class="fa-solid fa-book-open"></i>
-        <span>1. 8大攻擊向量知識庫</span>
+        <span>1. 20大攻擊向量知識庫</span>
       </button>
       <button onclick="switchTab('phishing')" id="nav-phishing" class="nav-tab py-3.5 px-1 border-b-2 font-medium text-sm flex items-center space-x-2 whitespace-nowrap border-transparent text-slate-500 hover:text-slate-700 hover:border-slate-300">
         <i class="fa-solid fa-envelope-open-text"></i>
@@ -123,18 +118,17 @@
   <!-- Main Container -->
   <main class="flex-1 max-w-7xl w-full mx-auto px-4 sm:px-6 lg:px-8 py-8">
 
-    <!-- Tab 1: 8大攻擊向量知識庫 -->
+    <!-- Tab 1: 20大攻擊向量知識庫 -->
     <div id="tab-knowledge" class="tab-content">
       <div class="mb-6">
-        <h2 class="text-xl font-bold text-slate-900">8 大社交工程攻擊向量 (Attack Vectors) 深度解析</h2>
-        <p class="text-sm text-slate-600 mt-1">徹底拆解常見攻擊手法、紅旗特徵、真實台灣與國際案例，以及技術層面處置建議。</p>
+        <h2 class="text-xl font-bold text-slate-900">20 大社交工程攻擊向量 (Attack Vectors) 全圖鑑解析</h2>
+        <p class="text-sm text-slate-600 mt-1">涵蓋最新現代化威脅：包含物理威脅、網路憑證收割、AI 生成聲紋與供應鏈詐騙之完整拆解。</p>
       </div>
 
-      <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 mb-6" id="knowledge-cards">
+      <div class="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-5 gap-3 mb-6" id="knowledge-cards">
         <!-- Rendered by JS -->
       </div>
 
-      <!-- Detail View Area -->
       <div id="knowledge-detail-card" class="bg-white rounded-xl border border-slate-200 p-6 shadow-sm">
         <!-- Dynamic detail content -->
       </div>
@@ -153,7 +147,6 @@
       </div>
 
       <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
-        <!-- Left 2 Cols: Email Viewer -->
         <div class="lg:col-span-2 bg-white rounded-xl border border-slate-200 shadow-sm overflow-hidden flex flex-col">
           <div class="bg-slate-50 px-6 py-4 border-b border-slate-200 flex justify-between items-center">
             <div class="flex items-center space-x-2">
@@ -170,7 +163,6 @@
           </div>
         </div>
 
-        <!-- Right 1 Col: Inspector & Assessment -->
         <div class="space-y-6">
           <div class="bg-white rounded-xl border border-slate-200 p-6 shadow-sm">
             <h3 class="text-base font-bold text-slate-900 mb-3 flex items-center">
@@ -182,7 +174,6 @@
             </div>
           </div>
 
-          <!-- Assessment Interactive Box -->
           <div class="bg-white rounded-xl border border-slate-200 p-6 shadow-sm">
             <h3 class="text-base font-bold text-slate-900 mb-3">同仁即時判斷測驗</h3>
             <p class="text-xs text-slate-500 mb-4">根據此封郵件的特徵，您會選擇如何處置？</p>
@@ -215,9 +206,7 @@
       </div>
 
       <div class="grid grid-cols-1 lg:grid-cols-12 gap-6">
-        <!-- Left: Sandbox UI Portal (7 Cols) -->
         <div class="lg:col-span-7 bg-white rounded-xl border border-slate-300 shadow-md overflow-hidden flex flex-col">
-          <!-- Fake Browser Bar -->
           <div class="bg-slate-100 px-4 py-2.5 border-b border-slate-200 flex items-center space-x-3">
             <div class="flex space-x-1.5">
               <div class="w-3 h-3 rounded-full bg-red-400"></div>
@@ -230,13 +219,11 @@
             </div>
           </div>
 
-          <!-- Dynamic Portal Form Render -->
           <div class="p-8 flex-1 flex flex-col justify-center max-w-md mx-auto w-full" id="sandbox-portal-body">
-            <!-- Dynamic Portal Form -->
+            <!-- Dynamic Form -->
           </div>
         </div>
 
-        <!-- Right: Real-time Payload Terminal & Security Warning (5 Cols) -->
         <div class="lg:col-span-5 space-y-4">
           <div class="bg-slate-900 text-slate-100 rounded-xl p-5 shadow-lg border border-slate-800">
             <div class="flex items-center justify-between border-b border-slate-800 pb-3 mb-3">
@@ -263,18 +250,16 @@
       </div>
     </div>
 
-    <!-- Tab 4: 20題綜合測驗 (全數一頁展現模式) -->
+    <!-- Tab 4: 20題綜合測驗 (一頁式展開模式) -->
     <div id="tab-exam" class="tab-content hidden">
-      <!-- 測驗填寫個人資料與全題目卡片 -->
       <div id="exam-full-card" class="bg-white rounded-xl border border-slate-200 p-6 md:p-8 shadow-sm max-w-4xl mx-auto space-y-8">
         
-        <!-- 標題與學員資料 -->
         <div class="border-b border-slate-200 pb-6 text-center">
           <div class="w-16 h-16 bg-brand-50 text-brand-600 rounded-full flex items-center justify-center mx-auto mb-3 text-2xl">
             <i class="fa-solid fa-clipboard-check"></i>
           </div>
           <h2 class="text-2xl font-bold text-slate-900">社交工程與資安防禦 20 題綜合實務測驗</h2>
-          <p class="text-sm text-slate-600 mt-1">本測驗共 20 題（一頁展現作答）。完成後成績將自動儲存並同步上傳至 Google 雲端試算表。</p>
+          <p class="text-sm text-slate-600 mt-1">本測驗共 20 題（一頁式完全展開作答）。完成後成績將自動上傳至 Google 雲端試算表。</p>
           
           <div class="bg-slate-50 rounded-xl p-5 text-left border border-slate-200 mt-6">
             <h3 class="text-xs font-bold text-slate-700 uppercase tracking-wider mb-3 flex items-center">
@@ -297,12 +282,10 @@
           </div>
         </div>
 
-        <!-- 20 題一次展開渲染區塊 -->
         <div id="exam-questions-list" class="space-y-6">
-          <!-- 20 題由 JS 動態生成 -->
+          <!-- 20 題全數一頁展開 -->
         </div>
 
-        <!-- 提交按鈕 -->
         <div class="border-t border-slate-200 pt-6 text-center">
           <button onclick="submitExamAll()" class="w-full sm:w-auto px-10 py-3.5 bg-brand-600 hover:bg-brand-700 text-white font-bold text-base rounded-xl shadow-lg transition">
             <i class="fa-solid fa-paper-plane mr-2"></i>提交 20 題測驗並傳送成績
@@ -310,15 +293,13 @@
         </div>
       </div>
 
-      <!-- Exam Result Certificate View -->
       <div id="exam-result-card" class="hidden bg-white rounded-xl border border-slate-200 p-8 shadow-md max-w-2xl mx-auto text-center">
-        <!-- Rendered by JS -->
+        <!-- Result Certificate -->
       </div>
     </div>
 
-    <!-- Tab 5: 教師管理與成績統計 -->
+    <!-- Tab 5: 教師管理與成績統計 (包含全數刪除與單筆刪除功能) -->
     <div id="tab-teacher" class="tab-content hidden">
-      <!-- Locked State -->
       <div id="teacher-auth-locked" class="bg-white rounded-xl border border-slate-200 p-8 shadow-sm max-w-md mx-auto text-center">
         <div class="w-14 h-14 bg-slate-100 text-slate-600 rounded-full flex items-center justify-center mx-auto mb-4 text-xl">
           <i class="fa-solid fa-lock"></i>
@@ -331,9 +312,7 @@
         </div>
       </div>
 
-      <!-- Dashboard Unlocked State -->
       <div id="teacher-dashboard-unlocked" class="hidden space-y-6">
-        <!-- KPI Cards -->
         <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
           <div class="bg-white p-5 rounded-xl border border-slate-200 shadow-2xs">
             <span class="text-xs font-semibold text-slate-500">總受測人次</span>
@@ -353,12 +332,11 @@
           </div>
         </div>
 
-        <!-- Grade List & Controls -->
         <div class="bg-white rounded-xl border border-slate-200 shadow-sm overflow-hidden">
           <div class="p-5 border-b border-slate-200 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
             <div>
               <h3 class="text-base font-bold text-slate-900">學員測驗成績總覽</h3>
-              <p class="text-xs text-slate-500">此數據整合 LocalStorage 本地端與 GAS 雲端 Google 試算表。</p>
+              <p class="text-xs text-slate-500">管理、刪除及同步 LocalStorage 與 Google 試算表之成績。</p>
             </div>
             <div class="flex flex-wrap items-center gap-2">
               <button onclick="syncGasScores()" class="px-3 py-1.5 text-xs font-medium text-brand-600 bg-brand-50 border border-brand-200 hover:bg-brand-100 rounded-lg transition flex items-center space-x-1">
@@ -373,16 +351,18 @@
                 <i class="fa-solid fa-file-csv"></i>
                 <span>匯出 CSV</span>
               </button>
+              <button onclick="clearAllScores()" class="px-3 py-1.5 text-xs font-medium text-red-700 bg-red-50 border border-red-200 hover:bg-red-100 rounded-lg transition flex items-center space-x-1">
+                <i class="fa-solid fa-trash-can"></i>
+                <span>清空全部成績</span>
+              </button>
             </div>
           </div>
 
-          <!-- Filter & Search Bar -->
           <div class="px-5 py-3 bg-slate-50 border-b border-slate-200 flex items-center justify-between">
             <input type="text" id="teacher-search-input" onkeyup="filterTeacherTable()" placeholder="搜尋姓名、班級或座號..." class="text-xs border border-slate-300 rounded-md px-3 py-1.5 w-64 focus:outline-none focus:ring-1 focus:ring-brand-500">
             <span class="text-xs text-slate-500" id="teacher-record-count">共 0 筆紀錄</span>
           </div>
 
-          <!-- Table Area -->
           <div class="overflow-x-auto">
             <table class="w-full text-left text-xs text-slate-700">
               <thead class="bg-slate-100 text-slate-600 font-semibold border-b border-slate-200">
@@ -394,7 +374,8 @@
                   <th class="px-4 py-3">得分</th>
                   <th class="px-4 py-3">資安等級頭銜</th>
                   <th class="px-4 py-3">答錯題數</th>
-                  <th class="px-4 py-3">評級與風控</th>
+                  <th class="px-4 py-3">評級</th>
+                  <th class="px-4 py-3 text-center">操作</th>
                 </tr>
               </thead>
               <tbody id="teacher-scores-tbody" class="divide-y divide-slate-200">
@@ -404,7 +385,6 @@
           </div>
         </div>
 
-        <!-- Official Answer Keys Modal Container -->
         <div id="teacher-answers-card" class="hidden bg-white rounded-xl border border-slate-200 p-6 shadow-sm">
           <h3 class="text-base font-bold text-slate-900 mb-4 flex items-center">
             <i class="fa-solid fa-lock-open text-amber-500 mr-2"></i>
@@ -444,17 +424,16 @@
     // DATA & GLOBAL STATE
     // ==========================================
 
-    // GAS API Endpoint URL (已預先寫入您的專屬 GAS URL)
-    let gasApiUrl = localStorage.getItem('social_eng_gas_url') || 'https://script.google.com/macros/s/AKfycbwCrwPtY0-3-LfGHJj6I_oSk1pt1fwYHElNSRzUvr1fsq7WIwyZxautHNpG6-IeDTV33Q/exec';
+    // GAS API Endpoint URL (已更新為您最新指定的 GAS 網址)
+    let gasApiUrl = localStorage.getItem('social_eng_gas_url') || 'https://script.google.com/macros/s/AKfycbyujFzbpcDWtircXi4mCh3HO4osWDFnGJuwIeVHfBt5CKfCAIucZUmT70fHKLf47pKYbg/exec';
 
-    // Active User State
     let currentUser = JSON.parse(localStorage.getItem('social_eng_current_user')) || null;
 
-    // 8 Major Knowledge Base Items
+    // 20 大社交工程攻擊向量完整資料
     const knowledgeData = [
       {
         id: "smishing",
-        title: "簡訊釣魚 (Smishing)",
+        title: "1. 簡訊釣魚 (Smishing)",
         icon: "fa-mobile-screen-button",
         short: "假冒快遞、銀行、政府罰單，誘使點擊簡訊內的縮網址。",
         chain: "簡訊通知 ➡️ 誘騙點擊短網址 ➡️ 跳轉偽造驗證頁面 ➡️ 竊取信用卡號/帳密",
@@ -464,7 +443,7 @@
       },
       {
         id: "bec",
-        title: "商業郵件詐騙 (BEC)",
+        title: "2. 商業郵件詐騙 (BEC)",
         icon: "fa-building-columns",
         short: "冒充 CEO、高層或長期合作廠商，指示急迫匯款或變更帳戶。",
         chain: "OSINT 蒐集公司階層 ➡️ 註冊相似網域或入侵高層郵件 ➡️ 發送秘密急迫指示 ➡️ 財務人員直接匯款",
@@ -474,7 +453,7 @@
       },
       {
         id: "quishing",
-        title: "QR Code 釣魚 (Quishing)",
+        title: "3. QR Code 釣魚 (Quishing)",
         icon: "fa-qrcode",
         short: "利用實體貼紙覆蓋正常 QR Code 或在信件內放置圖片碼繞過郵件過濾器。",
         chain: "實體場域/電子郵件放置 QR 碼 ➡️ 手機掃描跳轉 ➡️ 手機瀏覽器缺乏資安防護 ➡️ 憑證被竊",
@@ -484,7 +463,7 @@
       },
       {
         id: "mfa_fatigue",
-        title: "MFA 疲勞轟炸攻擊",
+        title: "4. MFA 疲勞轟炸攻擊",
         icon: "fa-bell-slash",
         short: "取得帳密後，連續觸發數十次 Authenticator App 推送通知以逼迫點擊同意。",
         chain: "外洩管道取得密碼 ➡️ 觸發 MFA Push Notification ➡️ 半夜連續發送 50+ 次 ➡️ 受害者煩躁誤點同意",
@@ -494,7 +473,7 @@
       },
       {
         id: "deepfake",
-        title: "AI 聲紋/影像偽造 (Deepfake)",
+        title: "5. AI 聲紋/影像偽造 (Deepfake)",
         icon: "fa-robot",
         short: "利用生成式 AI 複製高層或親友語音與動態影像進行語音社交工程。",
         chain: "社群媒體擷取語音樣本 ➡️ AI 訓練語音模型 ➡️ 撥打視訊或電話 ➡️ 要求緊急授權轉帳",
@@ -503,8 +482,78 @@
         defense: "針對重要決策約定「暗號/口令 verification」；視訊時要求對方做出側頭或轉身等 AI 易產生破綻的動作。"
       },
       {
+        id: "vishing",
+        title: "6. 語音釣魚 (Vishing)",
+        icon: "fa-headset",
+        short: "假冒銀行客服、檢警或公司 IT 人員，透過電話騙取口述 OTP 驗證碼。",
+        chain: "電話來電顯示偽造 ➡️ 營造刑事恐慌或系統升級 ➡️ 要求口述簡訊驗證碼 ➡️ 盜刷金流",
+        redflags: ["電話中主動要求口述 OTP 驗證碼", "要求離線轉帳或至提款機解除分期付款"],
+        case: "國內詐騙案例：假冒電信業者客服來電告知帳單異常，誘導民眾在電話中口述收到之門號認證碼，導致門號遭小額付款盜刷。",
+        defense: "資安守則：任何客服與機構皆不會要求口述 OTP 驗證碼；遇到可疑來電請掛斷後撥打 165 查證。"
+      },
+      {
+        id: "juice_jacking",
+        title: "7. 充電套取 (Juice Jacking)",
+        icon: "fa-plug",
+        short: "在公共充電站或借用改裝充電線，於充電時偷偷讀取手機資料或植入木馬。",
+        chain: "公共充電樁改裝傳輸晶片 ➡️ 使用者插入一般傳輸線 ➡️ 建立 MTP/ADB 信任 ➡️ 側錄相片與憑證",
+        redflags: ["插入充電線後手機彈出「是否信任此電腦」提示", "公共充電站要求安裝 App 才能充電"],
+        case: "機場與車站案例：攻擊者改裝公共免費充電站 USB 孔，當旅客插入手機充電時，惡意程式自動備份手機內的文字備忘錄與私鑰。",
+        defense: "使用純充電線（無數據傳輸線路）或 USB 防火牆 (Data Blocker/防毒保險套)；優先使用自備行動電源。"
+      },
+      {
+        id: "sim_swapping",
+        title: "8. SIM 卡劫持 (SIM Swapping)",
+        icon: "fa-sim-card",
+        short: "偽造身份向電信業者申請補發目標的 SIM 卡，接管手機門號以攔截 2FA 簡訊。",
+        chain: "蒐集個人身份證字號 ➡️ 向電信門市假冒失主補卡 ➡️ 舊 SIM 卡失效 ➡️ 攔截金融簡訊驗證碼重設密碼",
+        redflags: ["手機突然無預警失去電信訊號 (無服務)", "收到電信公司發送的「補換卡成功」通知簡訊"],
+        case: "加密貨幣名人遭劫案例：駭客透過社交工程騙過電信門市人員補發 SIM 卡，瞬間截獲其推特與加密交易所的簡訊 2FA 並轉走資產。",
+        defense: "向電信業者申請啟用「門市申辦二次密碼鎖」；棄用簡訊 2FA，改用 App Authenticator 或硬體金鑰 (FIDO2)。"
+      },
+      {
+        id: "seo_poisoning",
+        title: "9. 搜索引擎毒化 (SEO Poisoning)",
+        icon: "fa-magnifying-glass-chart",
+        short: "攻擊者買下關鍵字廣告，將偽造的常用軟體下載頁排在搜尋結果最頂端。",
+        chain: "購買「7-Zip」、「OBS」廣告關鍵字 ➡️ 製作相似軟體網頁 ➡️ 訪客點擊搜尋第一筆 ➡️ 下載帶有木馬之安裝檔",
+        redflags: ["搜尋結果帶有「贊助 / Ad」標籤", "軟體下載網域非軟體創作者官方 Domain"],
+        case: "許多工程師搜尋「AnyDesk」或「Notepad++」時點擊廣告頂部的假網站，下載安裝後電腦立刻被植入偷取瀏覽器 Password 的木馬。",
+        defense: "下載軟體務必核對官方域名，勿直接信任搜尋引擎首頁的贊助廣告連結。"
+      },
+      {
+        id: "evil_twin",
+        title: "10. WiFi 惡意雙胞胎 (Evil Twin)",
+        icon: "fa-wifi",
+        short: "在公共場所建立與官方名稱相同的免費 WiFi，側錄連線者未加密傳輸的數據。",
+        chain: "廣播相同 SSID (如 Starbucks_Free) ➡️ 強制覆蓋正常 AP ➡️ 使用者自動連線 ➡️ 側錄 HTTP 流量與彈出假登入頁",
+        redflags: ["連接 WiFi 後要求輸入 Google 或 FB 帳密才能上網", "WiFi 無需密碼但訊號異常強烈"],
+        case: "商務旅客在咖啡廳連接到攻擊者架設的假 WiFi，在登入公司系統時流量遭 MitM 中間人攔截，SSO 憑證當場曝光。",
+        defense: "使用公共 WiFi 務必全程開啟企業 VPN 進行加密連線；禁止開啟「自動連接開放式網路」。"
+      },
+      {
+        id: "shoulder_surfing",
+        title: "11. 肩窺攻擊 (Shoulder Surfing)",
+        icon: "fa-eye",
+        short: "在高鐵、咖啡廳或辦公室後方，透過目視偷看使用者輸入密碼或機密文件。",
+        chain: "尾隨目標至公共場所 ➡️ 站立於後方斜角角度 ➡️ 用手機偷拍或目視紀錄 ➡️ 取得機密或解鎖圖形",
+        redflags: ["身後有陌生人長時間滯留或拿手機對準螢幕", "在無遮蔽場所輸入敏感密碼"],
+        case: "高務人員在高鐵上開啟公司未脫敏的客戶資料試驗表，遭身後鄰座人員全程用手機錄影，致使商業機密外洩。",
+        defense: "筆記型電腦與手機應張貼「防窺貼膜」；在公共場所輸入密碼時應適當遮擋。"
+      },
+      {
+        id: "tailgating",
+        title: "12. 門禁尾隨攻擊 (Tailgating)",
+        icon: "fa-door-open",
+        short: "假裝搬運重物或假冒外送員，緊跟在持卡員工後方未經刷卡闖入管制區域。",
+        chain: "手提大包小包便當/快遞 ➡️ 於門禁關閉前呼叫「幫幫忙幫開門」 ➡️ 熱心員工幫忙扶門 ➡️ 未經授權闖入內網機房",
+        redflags: ["未配戴識別證人員隨同進入管制區", "以搬運重物為藉口要求協助開門"],
+        case: "攻擊者穿著知名外送服裝，趁同仁感應門禁時緊跟進入辦公大樓，隨後在無人會議室插上惡意樹莓派網域開後門。",
+        defense: "嚴格落實「一人一卡刷卡進出」原則；發現無識別證人員應禮貌詢問並引導至前台登記。"
+      },
+      {
         id: "badusb",
-        title: "實體誘餌與 BadUSB",
+        title: "13. 實體誘餌與 BadUSB",
         icon: "fa-usb",
         short: "將植入惡意韌體的隨身碟遺留在公司停車場或茶水間誘使同仁插電腦。",
         chain: "製作模擬鍵盤 (HID) 之 BadUSB ➡️ 丟棄於目標公司公共區域 ➡️ 好奇同仁插入電腦 ➡️ 0.1秒執行 Powershell 腳本",
@@ -514,7 +563,7 @@
       },
       {
         id: "watering_hole",
-        title: "水坑攻擊 (Watering Hole)",
+        title: "14. 水坑攻擊 (Watering Hole)",
         icon: "fa-faucet-detergent",
         short: "入侵目標產業同仁經常造訪的合法第三方網站，對其植入零日漏洞惡意腳本。",
         chain: "分析目標族群造訪習慣 ➡️ 入侵防禦較弱的第三方產業論壇 ➡️ 植入惡意 Script ➡️ 精準水坑感染目標同仁",
@@ -524,17 +573,66 @@
       },
       {
         id: "osint",
-        title: "社群媒體 OSINT 探針",
+        title: "15. 社群媒體 OSINT 探針",
         icon: "fa-user-secret",
         short: "從 LinkedIn、Facebook 蒐集員工職稱、專案、設備資訊以進行精準劇本編造。",
         chain: "公開社群爬取同仁資料 ➡️ 鎖定新進員工或 HR ➡️ 假冒獵頭或供應商建立信任 ➡️ 傳送含惡意巨集之履歷",
         redflags: ["陌生獵頭傳送 .docm / .zip 格式履歷或專案檔", "過度打聽公司內部系統架構與廠商"],
         case: "軟體工程師於 LinkedIn 收到高薪假職缺邀請，下載「技術測試專案檔」後開發環境特權金鑰遭竊。",
         defense: "同仁應建立個人社群媒體資安隱私意識；對外來檔案應於隔離沙盒環境開啟。"
+      },
+      {
+        id: "dumpster_diving",
+        title: "16. 垃圾搜尋 (Dumpster Diving)",
+        icon: "fa-trash-can",
+        short: "從公司或同仁棄置的垃圾桶中，搜尋未經碎紙機銷毀的機密紙本文件與硬碟。",
+        chain: "翻找回收桶與廢棄物 ➡️ 取得列印之客戶名冊/密碼便條紙 ➡️ 拼湊組織架構與系統帳號 ➡️ 發動精準攻擊",
+        redflags: ["辦公室廢棄文件未妥善投入保密回收桶", "廢棄電腦硬碟未經物理破壞即拋棄"],
+        case: "駭客團體在目標公司後方回收區撿到未碎紙的備份日誌，從中獲得舊系統預設密碼並成功穿透外網 portal。",
+        defense: "敏感文件廢棄時必須使用「顆粒狀碎紙機」；淘汰硬碟須經過消磁或物理打孔破壞。"
+      },
+      {
+        id: "pretexting",
+        title: "17. 藉口劇本欺詐 (Pretexting)",
+        icon: "fa-masks-theater",
+        short: "編造極度具說服力的角色劇本（如審計員、IT檢修），以合情合理藉口索取資料。",
+        chain: "研究目標企業運作流程 ➡️ 假冒總公司法遵稽核人員 ➡️ 聲稱進行緊急系統稽核 ➡️ 騙取同仁提供內部授權碼",
+        redflags: ["未經預約的外部稽核或調查電話", "以合規/法律責任威脅同仁立即配合"],
+        case: "攻擊者假冒外部會計師事務所，致電分公司實習生稱要進行「年度發票稽核」，騙取實習生將全套進銷項 Excel 寄出。",
+        defense: "落實「嚴格身分查驗」；針對異常資料索取要求，必須向直屬主管確認身分真偽。"
+      },
+      {
+        id: "supply_chain",
+        title: "18. 供應鏈社交工程",
+        icon: "fa-truck-ramp-box",
+        short: "入侵防禦較弱的外包商或軟體供應商，藉其信任管道滲透最終目標企業。",
+        chain: "攻陷安全防禦較弱的印表機維護商 ➡️ 使用維護商合法 Email 寄信給目標客戶 ➡️ 附加惡意更新檔 ➡️ 穿透客戶內網",
+        redflags: ["長期合作廠商突然使用非慣用之個人信箱來信", "維護廠商要求提供超乎常理的特權帳號"],
+        case: "知名零售商遭大規模資料外洩，原因係攻擊者先以釣魚信攻陷其空調外包商，再利用外包商的 VPN 存取權限侵入內網。",
+        defense: "對第三方供應商實施 Zero Trust 最小權限控管；供應商帳號進出須經由零信任 PAM 稽核。"
+      },
+      {
+        id: "malvertising",
+        title: "19. 釣魚式惡意廣告 (Malvertising)",
+        icon: "fa-rectangle-ad",
+        short: "利用正規線上廣告聯播網投放含惡意跳轉或腳本的橫幅廣告，誘使訪客點擊。",
+        chain: "於知名新聞網買下廣告位 ➡️ 嵌入隱藏腳本或跳轉網址 ➡️ 訪客瀏覽正常網站 ➡️ 遭跳轉至詐騙軟體更新頁面",
+        redflags: ["瀏覽新聞網站時跳出「您的 Flash/Chrome 已過期需更新」強迫視窗", "廣告內容極度誇大"],
+        case: "同仁在瀏覽合法財經新聞時，點擊了頁面上的惡意贊助廣告，瞬間被引導至偽造的 Java 更新頁面並下載了勒索軟體。",
+        defense: "企業網域安裝 Ad-Blocker 廣告攔截套件；禁止瀏覽器自動執行非信任腳本。"
+      },
+      {
+        id: "reverse_social_eng",
+        title: "20. 反向社交工程 (Reverse Social Eng)",
+        icon: "fa-handshake-angle",
+        short: "攻擊者先對目標製造故障，再假冒救星/專家主動提供協助，讓受害者主動求助並獻出權限。",
+        chain: "發動 DDoS 使同仁電腦網路癱瘓 ➡️ 張貼假 IT 支援貼紙 ➡️ 受害者主動打電話求助 ➡️ 駭客「協助修復」並索取特權帳密",
+        redflags: ["系統故障後立刻收到未知專家的主動關懷電話", "非官方管道提供之 IT 支援聯絡方式"],
+        case: "駭客先對公司網路進行干擾，隨後假冒「總部支援工程師」主動來電，受害者因著急恢復工作，主動將 AnyDesk 連線密碼告知對方。",
+        defense: "企業技術支援應統一由官方 Internal Helpdesk 受理；禁止向任何未驗證人員提供遠端控制權。"
       }
     ];
 
-    // 6 Phishing Email Templates
     const phishingTemplates = [
       {
         title: "IT 密碼過期重設警示",
@@ -561,47 +659,33 @@
           { text: "2026_Bonus_Detail.xlsm", type: "attachment", info: "🚨 【含巨集試算表】.xlsm 檔案可能包含開啟時自動執行的惡意 VBA 巨集。" }
         ],
         body: `各位同仁：<br><br>2026 年度績效獎金已經試算完成，請點選下方連結確認您的獎金金額與撥款帳戶。請注意，<span class="hotspot" onclick="inspectHotspot(1)">務必於今日下班前確認</span>完畢。<br><br>線上查詢入口：<br><a href="#" class="text-brand-600 underline code-font hotspot" onclick="inspectHotspot(2)">http://hr-corp-portal.net/bonus/claim</a><br><br>或下載加密明細檔：<br><span class="inline-block bg-slate-100 p-2 rounded border border-slate-300 text-xs code-font hotspot" onclick="inspectHotspot(3)"><i class="fa-solid fa-file-excel text-emerald-600 mr-1"></i> 2026_Bonus_Detail.xlsm</span>`
-      },
-      {
-        title: "快遞包裹包裹攔截通知",
-        sender: "FedEx Express <notice@express-delivery-tracking.biz>",
-        subject: "【二次通知】您的重要國際包裹因地址不全被攔截，請更新地址",
-        date: "2026-10-27 08:20",
-        hotspots: [
-          { text: "notice@express-delivery-tracking.biz", type: "sender", info: "🚨 【假冒物流發件人】使用 .biz 網域假冒知名快遞 FedEx。" },
-          { text: "包裹將於 48 小時內退回寄件人", type: "urgency", info: "🚨 【焦慮心理】製造遺失重要包裹的恐懼感。" },
-          { text: "https://express-delivery-tracking.biz/update", type: "link", info: "🚨 【信用卡釣魚】此連結會要求輸入姓名、地址及信用卡號支付 30 元關稅。" },
-          { text: "Waybill_Manifest.zip", type: "attachment", info: "🚨 【壓縮檔誘餌】ZIP 內常藏有木馬程式或腳本。" }
-        ],
-        body: `尊貴的客戶您好：<br><br>您有一件國際快遞單號 #9482-1049 因收件地址不完整暫時攔截於轉運中心。<span class="hotspot" onclick="inspectHotspot(1)">包裹將於 48 小時內退回寄件人</span>。<br><br>請儘速更新地址並補繳 30 元手續費：<br><a href="#" class="text-brand-600 underline code-font hotspot" onclick="inspectHotspot(2)">https://express-delivery-tracking.biz/update</a><br><br>附件為託運單掃描檔：<br><span class="inline-block bg-slate-100 p-2 rounded border border-slate-300 text-xs code-font hotspot" onclick="inspectHotspot(3)"><i class="fa-solid fa-file-zipper text-amber-600 mr-1"></i> Waybill_Manifest.zip</span>`
       }
     ];
 
-    // 20 Exam Questions Bank
+    // 20 題綜合測驗題目庫（完整對應 20 大攻擊向量）
     const examQuestions = [
       { id: 1, q: "當您收到簡訊稱「您的快遞包裹地址不全無法送達，請點擊連結更新」，最適當的處理方式為何？", options: ["A. 直接點擊簡訊網址輸入信用卡付手續費", "B. 切勿點擊，透過物流官方管道或 App 查證", "C. 轉發給同事請他幫忙點點看", "D. 直接回覆簡訊罵詐騙集團"], correct: 1 },
       { id: 2, q: "攻擊者註冊與官方極為相似的網域（例如將 microsoft.com 替換為 micr0soft.com），此技術稱為什麼？", options: ["A. DDoS 攻擊", "B. 相似網域 (Lookalike Domain)", "C. SQL 注入", "D. 跨站腳本 (XSS)"], correct: 1 },
       { id: 3, q: "收到 Authenticator 連續發出數十次未授權的 MFA 登入推送通知時，應如何處置？", options: ["A. 直接點擊同意以停止通知干擾", "B. 拒絕請求，並立即向 IT/資安團隊通報密碼可能已外洩", "C. 忽略它並關閉手機靜音", "D. 刪除 Authenticator App"], correct: 1 },
       { id: 4, q: "實體公共場所的二維碼被貼紙覆蓋，掃描後要求輸入憑證，這屬於哪種社交工程攻擊？", options: ["A. QR Code 釣魚 (Quishing)", "B. 零日漏洞攻擊", "C. 中間人攻擊", "D. 勒索軟體"], correct: 0 },
       { id: 5, q: "針對特定特定高階主管或關鍵人員，經過深度蒐集資料後量身打造的釣魚攻擊稱為？", options: ["A. 垃圾郵件 (Spam)", "B. 魚叉式釣魚 (Spear Phishing)", "C. 網路蠕蟲", "D. 緩衝區溢位"], correct: 1 },
-      { id: 6, q: "郵件標頭認證機制中，哪一項 DNS 記錄用以列出授權代表該網域發信的 IP 位址？", options: ["A. SPF (Sender Policy Framework)", "B. HTTPS", "C. SSL Certificate", "D. CNAME"], correct: 0 },
-      { id: 7, q: "駭客利用 3 秒鐘的公開語音樣本，複製主管聲音並打電話要求緊急匯款，這是使用了何種技術？", options: ["A. AI Deepfake 語音複製", "B. 網路威脅情報", "C. 區塊鏈", "D. 自動化應答系統"], correct: 0 },
-      { id: 8, q: "攻擊者入侵目標產業同仁經常造訪的合法第三方新聞網站並植入惡意腳本，此手法稱為？", options: ["A. 魚叉攻擊", "B. 水坑攻擊 (Watering Hole)", "C. 中間人攻擊", "D. 社交工程電話"], correct: 1 },
-      { id: 9, q: "商務電子郵件詐騙 (BEC) 最常冒用哪種身份要求財務人員緊急轉帳？", options: ["A. 實習生", "B. 執行長 (CEO) 或高階主管", "C. 外籍清潔人員", "D. 外部訪客"], correct: 1 },
-      { id: 10, q: "若您未進行任何登入操作，手機卻突然收到 Google 帳號驗證碼簡訊，代表什麼？", options: ["A. 這是系統免費獎勵", "B. 您的帳號密碼已被攻擊者掌握並嘗試登入", "C. 手機連線發生故障", "D. 簡訊發送系統錯誤"], correct: 1 },
-      { id: 11, q: "攻擊者預先編造角色（如 IT 檢修人員）與虛構劇本來獲取信任的手法稱為？", options: ["A. Pretexting (藉口劇本)", "B. Port Scanning", "C. SQLi", "D. Fuzzing"], correct: 0 },
-      { id: 12, q: "在辦公室隨意丟棄印有敏感客戶個資或網路拓撲圖的紙張，容易遭到何種社交工程威脅？", options: ["A. 垃圾搜尋 (Dumpster Diving)", "B. 惡意軟體", "C. 魚叉釣魚", "D. 密碼暴力破解"], correct: 0 },
-      { id: 13, q: "在公司停車場撿到未知 USB 隨身碟，正確的處置方式為何？", options: ["A. 插入公司電腦查看內容尋找失主", "B. 插入個人私人的電腦測試", "C. 切勿插入任何電腦，直接呈交資安或 IT 單位", "D. 格式化後留著自己使用"], correct: 2 },
-      { id: 14, q: "攻擊者透過 LinkedIn 蒐集同仁的職稱、專案工具與出差行程，這屬於攻擊鏈的哪一階段？", options: ["A. OSINT 公開情報蒐集", "B. 橫向移動", "C. 權限提升", "D. 資料加密"], correct: 0 },
-      { id: 15, q: "結合了 SPF 與 DKIM 驗證，並規定郵件驗證失敗時處置政策的標準為何？", options: ["A. DMARC", "B. DHCP", "C. FTP", "D. TLS"], correct: 0 },
-      { id: 16, q: "收到供應商突然要求變更匯款銀行帳戶的 Email 時，最安全的操作規範是什麼？", options: ["A. 直接回覆該 Email 確認即可", "B. 透過舊有已知官方電話進行雙重線下確認 (Out-of-Band)", "C. 馬上依照新帳號匯款", "D. 忽略此郵件不處理"], correct: 1 },
-      { id: 17, q: "攻擊者買下線上廣告聯播網的版位，透過廣告投放惡意跳轉腳本的手法稱為？", options: ["A. Malvertising (惡意廣告)", "B. SEO 優化", "C. 橫幅行銷", "D. 品牌聯播"], correct: 0 },
-      { id: 18, q: "零信任 (Zero Trust) 資安架構的核心原則為何？", options: ["A. 內網絕對安全", "B. 永不信任，始終驗證", "C. 只要有密碼就信任", "D. 防火牆能阻擋一切"], correct: 1 },
-      { id: 19, q: "在機場或咖啡廳使用公共無加密 Wi-Fi 處理公司公務，容易面臨哪種風險？", options: ["A. 中間人攻擊 (MitM) 竊聽未加密封包", "B. 電池過熱", "C. 螢幕壞死", "D. 硬體損壞"], correct: 0 },
-      { id: 20, q: "發現自己不小心在釣魚網頁輸入了公司帳號密碼，第一時間應該怎麼做？", options: ["A. 裝作不知道", "B. 立即變更密碼並向資安/SOC 單位通報應變", "C. 關閉螢幕離開座位", "D. 刪除瀏覽紀錄即可"], correct: 1 }
+      { id: 6, q: "假冒銀行或 IT 客服來電，以電話語音誘騙民眾口述 OTP 簡訊驗證碼的手法稱為？", options: ["A. 語音釣魚 (Vishing)", "B. 水坑攻擊", "C. 門禁尾隨", "D. 垃圾搜尋"], correct: 0 },
+      { id: 7, q: "使用公共免費 USB 充電座時，手機資料可能被改裝線路偷取的威脅稱作？", options: ["A. 充電套取 (Juice Jacking)", "B. 惡意廣告", "C. 鍵盤側錄", "D. 藍芽蓋劫"], correct: 0 },
+      { id: 8, q: "攻擊者偽造失主身份向電信業者申請補發 SIM 卡，藉此攔截簡訊 2FA 驗證碼的手法為？", options: ["A. SIM 卡劫持 (SIM Swapping)", "B. 魚叉攻擊", "C. 惡意雙胞胎", "D. SEO 毒化"], correct: 0 },
+      { id: 9, q: "買下搜尋引擎關鍵字廣告，將假冒的軟體下載網頁放在搜尋結果第一筆的手法稱為？", options: ["A. SEO 毒化 (SEO Poisoning)", "B. DDoS 攻擊", "C. SQL 注入", "D. 零信任"], correct: 0 },
+      { id: 10, q: "在咖啡廳建立與官方 SSID 名稱相同的開放式免費 WiFi，藉此側錄連線者流量的手法為？", options: ["A. WiFi 惡意雙胞胎 (Evil Twin)", "B. 門禁尾隨", "C. 垃圾搜尋", "D. BadUSB"], correct: 0 },
+      { id: 11, q: "在公共場所或辦公室後方目視偷看他人輸入密碼或機密文件，此行為稱為？", options: ["A. 肩窺攻擊 (Shoulder Surfing)", "B. 語音釣魚", "C. 供應鏈攻擊", "D. 水坑攻擊"], correct: 0 },
+      { id: 12, q: "假冒外送員或搬運重物者，緊跟在持卡員工後方未經刷卡闖入管制區的手法稱為？", options: ["A. 門禁尾隨 (Tailgating)", "B. 簡訊釣魚", "C. SEO 毒化", "D. 充電套取"], correct: 0 },
+      { id: 13, q: "將植入模擬鍵盤 (HID) 韌體的隨身碟遺留在停車場誘使同仁插入電腦的手法為？", options: ["A. BadUSB 實體誘餌", "B. MFA 疲勞", "C. 惡意廣告", "D. 反向社交工程"], correct: 0 },
+      { id: 14, q: "入侵特定目標產業同仁經常造訪的合法第三方新聞網站並植入惡意腳本，此手法稱為？", options: ["A. 水坑攻擊 (Watering Hole)", "B. 魚叉攻擊", "C. 中間人攻擊", "D. 社交工程電話"], correct: 0 },
+      { id: 15, q: "攻擊者透過 LinkedIn 蒐集同仁的職稱、專案工具與出差行程，這屬於哪種公開情報蒐集？", options: ["A. OSINT 公開情報蒐集", "B. 橫向移動", "C. 權限提升", "D. 資料加密"], correct: 0 },
+      { id: 16, q: "從辦公室廢棄垃圾桶中翻找未經過碎紙機銷毀的客戶名單與紙本文件，此行為稱為？", options: ["A. 垃圾搜尋 (Dumpster Diving)", "B. 惡意軟體", "C. 魚叉釣魚", "D. 密碼暴力破解"], correct: 0 },
+      { id: 17, q: "攻擊者預先編造角色（如外聘審計員）與虛構劇本來獲取信任的手法稱為？", options: ["A. 藉口劇本欺詐 (Pretexting)", "B. Port Scanning", "C. SQLi", "D. Fuzzing"], correct: 0 },
+      { id: 18, q: "攻擊防禦較弱的外包商或印表機維護廠商，藉其信任管道滲透目標企業內網稱為？", options: ["A. 供應鏈攻擊 (Supply Chain Attack)", "B. 惡意雙胞胎", "C. 肩窺攻擊", "D. 簡訊釣魚"], correct: 0 },
+      { id: 19, q: "買下正常新聞網頁的廣告欄位，並投放帶有惡意跳轉腳本的橫幅廣告，此手法稱為？", options: ["A. 釣魚式惡意廣告 (Malvertising)", "B. SEO 優化", "C. 橫幅行銷", "D. 品牌聯播"], correct: 0 },
+      { id: 20, q: "先發動攻擊讓目標系統癱瘓，再假冒總部 IT 救星主動協助，讓受害者主動獻出帳密的手法稱為？", options: ["A. 反向社交工程 (Reverse Social Eng)", "B. 門禁尾隨", "C. 垃圾搜尋", "D. 簡訊釣魚"], correct: 0 }
     ];
 
-    // Local State Variables
     let currentKnowledgeIdx = 0;
     let currentPhishingIdx = 0;
     let currentSandboxIdx = 0;
@@ -609,9 +693,6 @@
     let teacherAnswerKeys = null;
     let localScoresList = JSON.parse(localStorage.getItem('social_eng_scores')) || [];
 
-    // ==========================================
-    // INITIALIZATION & TAB NAVIGATION
-    // ==========================================
     window.onload = function() {
       renderUserSessionBadge();
       renderKnowledgeCards();
@@ -639,16 +720,13 @@
       }
     }
 
-    // ==========================================
-    // AUTHENTICATION & USER SESSION SYSTEM
-    // ==========================================
     function renderUserSessionBadge() {
       const badgeContainer = document.getElementById('user-session-badge');
       if (currentUser) {
         if (currentUser.role === 'teacher') {
           badgeContainer.innerHTML = `
             <span class="px-2.5 py-1 text-xs bg-amber-100 text-amber-800 font-semibold rounded-md border border-amber-200 flex items-center">
-              <i class="fa-solid fa-user-shield mr-1"></i> 教師/資安官身分
+              <i class="fa-solid fa-user-shield mr-1"></i> 教師身分
             </span>
             <button onclick="logout()" class="text-xs text-slate-500 hover:text-red-600 px-2 py-1"><i class="fa-solid fa-right-from-bracket"></i> 登出</button>
           `;
@@ -676,7 +754,6 @@
       switchTab('knowledge');
     }
 
-    // Teacher Auth Cloud Verification (GAS API)
     async function loginTeacher() {
       const pwdInput = document.getElementById('teacher-password-input').value.trim();
       if (!pwdInput) {
@@ -684,11 +761,6 @@
         return;
       }
 
-      if (!gasApiUrl) {
-        alert("⚠️ 尚未設定 GAS API URL！將以離線預設模式進行密碼驗證。請點擊右上角設定 GAS URL。");
-      }
-
-      // If GAS API is configured, verify password via cloud API
       if (gasApiUrl) {
         try {
           const res = await fetch(`${gasApiUrl}?action=verifyTeacherPassword&password=${encodeURIComponent(pwdInput)}`);
@@ -709,8 +781,6 @@
           return;
         }
       }
-
-      // Fallback for offline testing if no GAS URL is set
       alert("⚠️ 請設定 GAS API URL 以完成雲端密碼驗證！");
     }
 
@@ -728,18 +798,14 @@
       }
     }
 
-    // ==========================================
-    // MODULE 1: KNOWLEDGE BASE ENGINE
-    // ==========================================
     function renderKnowledgeCards() {
       const container = document.getElementById('knowledge-cards');
       container.innerHTML = knowledgeData.map((item, idx) => `
-        <div onclick="renderKnowledgeDetail(${idx})" class="cursor-pointer bg-white p-4 rounded-xl border ${currentKnowledgeIdx === idx ? 'border-brand-600 ring-2 ring-brand-500/20' : 'border-slate-200 hover:border-slate-300'} shadow-2xs transition">
-          <div class="w-9 h-9 rounded-lg ${currentKnowledgeIdx === idx ? 'bg-brand-600 text-white' : 'bg-slate-100 text-slate-600'} flex items-center justify-center mb-3">
+        <div onclick="renderKnowledgeDetail(${idx})" class="cursor-pointer bg-white p-3 rounded-xl border ${currentKnowledgeIdx === idx ? 'border-brand-600 ring-2 ring-brand-500/20' : 'border-slate-200 hover:border-slate-300'} shadow-2xs transition">
+          <div class="w-8 h-8 rounded-lg ${currentKnowledgeIdx === idx ? 'bg-brand-600 text-white' : 'bg-slate-100 text-slate-600'} flex items-center justify-center mb-2 text-sm">
             <i class="fa-solid ${item.icon}"></i>
           </div>
-          <h3 class="text-sm font-bold text-slate-900 mb-1">${item.title}</h3>
-          <p class="text-xs text-slate-500 line-clamp-2">${item.short}</p>
+          <h3 class="text-xs font-bold text-slate-900 truncate">${item.title}</h3>
         </div>
       `).join('');
     }
@@ -797,9 +863,6 @@
       `;
     }
 
-    // ==========================================
-    // MODULE 2: PHISHING SPOTTER ENGINE
-    // ==========================================
     function renderPhishingSelector() {
       const container = document.getElementById('phishing-selector');
       container.innerHTML = phishingTemplates.map((item, idx) => `
@@ -828,7 +891,6 @@
         </div>
       `;
 
-      // Reset inspector
       document.getElementById('hotspot-inspector').innerHTML = `<p class="text-slate-400 text-center py-8">👈 請在左側信件內點擊黃色高亮區域查看詳細資安解析。</p>`;
       document.getElementById('assessment-result').classList.add('hidden');
     }
@@ -862,9 +924,6 @@
       }
     }
 
-    // ==========================================
-    // MODULE 3: FAKE LOGIN SANDBOX ENGINE
-    // ==========================================
     const sandboxPortals = [
       {
         name: "Microsoft 365",
@@ -935,7 +994,6 @@
         </form>
       `;
 
-      // Reset console & alert card
       document.getElementById('sandbox-console').innerHTML = `<p class="text-slate-500">[SYSTEM]: 沙盒側錄終端已就緒。請在左側輸入資料並點擊登入試驗。</p>`;
       document.getElementById('sandbox-alert-card').classList.add('hidden');
     }
@@ -969,7 +1027,7 @@
     }
 
     // ==========================================
-    // MODULE 4: 20-QUESTION EXAM ENGINE (FULL VIEW)
+    // 20 題綜合測驗 (全數一頁展現模式)
     // ==========================================
     function renderAllExamQuestions() {
       const listContainer = document.getElementById('exam-questions-list');
@@ -1006,7 +1064,6 @@
         return;
       }
 
-      // Check if all 20 questions are answered
       let unansweredCount = 0;
       examQuestions.forEach(q => {
         if (examUserAnswers[q.id] === undefined) {
@@ -1052,11 +1109,9 @@
         incorrectCount: incorrectCount
       };
 
-      // Save locally
       localScoresList.unshift(record);
       localStorage.setItem('social_eng_scores', JSON.stringify(localScoresList));
 
-      // Post to GAS API if configured
       if (gasApiUrl) {
         try {
           fetch(gasApiUrl, {
@@ -1070,7 +1125,6 @@
         }
       }
 
-      // Render Result Certificate View
       document.getElementById('exam-full-card').classList.add('hidden');
       const resultCard = document.getElementById('exam-result-card');
       resultCard.classList.remove('hidden');
@@ -1095,7 +1149,7 @@
     }
 
     // ==========================================
-    // MODULE 5: TEACHER MANAGEMENT ENGINE
+    // 教師管理與成績統計 (含單筆刪除與清空全部)
     // ==========================================
     function renderTeacherDashboard() {
       const allRecords = localScoresList;
@@ -1109,6 +1163,10 @@
         document.getElementById('kpi-avg-score').innerText = `${avg} / 100`;
         document.getElementById('kpi-pass-rate').innerText = `${Math.round((passCount / allRecords.length) * 100)}%`;
         document.getElementById('kpi-high-risk').innerText = `${Math.round((highRiskCount / allRecords.length) * 100)}%`;
+      } else {
+        document.getElementById('kpi-avg-score').innerText = `0 / 100`;
+        document.getElementById('kpi-pass-rate').innerText = `0%`;
+        document.getElementById('kpi-high-risk').innerText = `0%`;
       }
 
       renderTeacherTable(allRecords);
@@ -1119,11 +1177,11 @@
       document.getElementById('teacher-record-count').innerText = `共 ${records.length} 筆紀錄`;
 
       if (records.length === 0) {
-        tbody.innerHTML = `<tr><td colspan="8" class="text-center py-8 text-slate-400">尚無測驗紀錄數據</td></tr>`;
+        tbody.innerHTML = `<tr><td colspan="9" class="text-center py-8 text-slate-400">尚無測驗紀錄數據</td></tr>`;
         return;
       }
 
-      tbody.innerHTML = records.map(r => `
+      tbody.innerHTML = records.map((r, idx) => `
         <tr class="hover:bg-slate-50">
           <td class="px-4 py-3 code-font text-slate-500">${r.timestamp}</td>
           <td class="px-4 py-3 font-semibold">${r.className}</td>
@@ -1137,8 +1195,30 @@
               ${r.score >= 70 ? '合格 Pass' : '高風險 Risk'}
             </span>
           </td>
+          <td class="px-4 py-3 text-center">
+            <button onclick="deleteSingleScore(${idx})" class="text-red-600 hover:text-red-800 text-xs px-2 py-1 rounded bg-red-50 hover:bg-red-100 transition">
+              <i class="fa-solid fa-trash-can mr-1"></i>刪除
+            </button>
+          </td>
         </tr>
       `).join('');
+    }
+
+    function deleteSingleScore(idx) {
+      if (confirm(`確定要刪除學員「${localScoresList[idx].studentName}」的測驗紀錄嗎？`)) {
+        localScoresList.splice(idx, 1);
+        localStorage.setItem('social_eng_scores', JSON.stringify(localScoresList));
+        renderTeacherDashboard();
+      }
+    }
+
+    function clearAllScores() {
+      if (confirm("⚠️ 警告：這將會刪除本地端儲存的所有學生成績紀錄！確定要清空嗎？")) {
+        localScoresList = [];
+        localStorage.removeItem('social_eng_scores');
+        renderTeacherDashboard();
+        alert("已清空所有本地成績紀錄。");
+      }
     }
 
     function filterTeacherTable() {
@@ -1193,7 +1273,6 @@
         }
       }
 
-      // Render Keys
       container.innerHTML = examQuestions.map(q => {
         const keyInfo = teacherAnswerKeys ? teacherAnswerKeys[q.id] : null;
         const optText = q.options[q.correct];
@@ -1201,7 +1280,7 @@
           <div class="bg-slate-50 p-3.5 rounded-lg border border-slate-200 text-xs">
             <div class="font-bold text-slate-900 mb-1">${q.id}. ${q.q}</div>
             <div class="text-emerald-700 font-semibold mb-1"><i class="fa-solid fa-check-circle mr-1"></i>正確解答：${optText}</div>
-            <div class="text-slate-600 leading-relaxed"><span class="font-semibold">觀念解析：</span>${keyInfo ? keyInfo.explanation : '請參考各單元防禦知識庫說明。'}</div>
+            <div class="text-slate-600 leading-relaxed"><span class="font-semibold">觀念解析：</span>${keyInfo ? keyInfo.explanation : '請參考 20 大攻擊向量知識庫詳細說明。'}</div>
           </div>
         `;
       }).join('');
@@ -1229,9 +1308,6 @@
       document.body.removeChild(link);
     }
 
-    // ==========================================
-    // GAS MODAL HELPERS
-    // ==========================================
     function openGasModal() {
       document.getElementById('gas-url-input').value = gasApiUrl;
       document.getElementById('gas-modal').classList.remove('hidden');
