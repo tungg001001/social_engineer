@@ -243,7 +243,7 @@
       </div>
     </div>
 
-    <!-- Tab 4: 20題綜合測驗 (一頁式展開模式) -->
+    <!-- Tab 4: 20題綜合測驗 -->
     <div id="tab-exam" class="tab-content hidden">
       <div id="exam-full-card" class="bg-white rounded-xl border border-slate-200 p-6 md:p-8 shadow-sm max-w-4xl mx-auto space-y-8">
         
@@ -291,7 +291,7 @@
       </div>
     </div>
 
-    <!-- Tab 5: 教師管理與成績統計 (包含全數刪除與單筆刪除功能) -->
+    <!-- Tab 5: 教師管理與成績統計 -->
     <div id="tab-teacher" class="tab-content hidden">
       <div id="teacher-auth-locked" class="bg-white rounded-xl border border-slate-200 p-8 shadow-sm max-w-md mx-auto text-center">
         <div class="w-14 h-14 bg-slate-100 text-slate-600 rounded-full flex items-center justify-center mx-auto mb-4 text-xl">
@@ -404,10 +404,10 @@
     // DATA & GLOBAL STATE
     // ==========================================
 
-    // 固定硬編碼專屬 GAS API 網址
     const gasApiUrl = 'https://script.google.com/macros/s/AKfycbyujFzbpcDWtircXi4mCh3HO4osWDFnGJuwIeVHfBt5CKfCAIucZUmT70fHKLf47pKYbg/exec';
 
     let currentUser = JSON.parse(localStorage.getItem('social_eng_current_user')) || null;
+    let localScores = JSON.parse(localStorage.getItem('social_eng_scores')) || [];
 
     // 20 大社交工程攻擊向量完整資料
     const knowledgeData = [
@@ -613,6 +613,7 @@
       }
     ];
 
+    // 4 個擬真釣魚教案（包含圖片與二維碼特徵）
     const phishingTemplates = [
       {
         title: "IT 密碼過期重設警示",
@@ -629,59 +630,108 @@
       },
       {
         title: "HR 規範：發放年終績效獎金明細",
-        sender: "HR Department <payroll@hr-corp-portal.net>",
-        subject: "【機密】2026 年度個人績效獎金與發放明細核對表",
-        date: "2026-10-26 16:40",
+        sender: "HR Dept <hr-notice@corp-hr-portal.net>",
+        subject: "【極密】2026 年度個人績效獎金發放明細核對通知",
+        date: "2026-10-27 10:30",
         hotspots: [
-          { text: "payroll@hr-corp-portal.net", type: "sender", info: "🚨 【可疑域名】HR 電子郵件來自外部免費或似是而非的網域 (.net)。" },
-          { text: "務必於今日下班前確認", type: "urgency", info: "🚨 【貪婪與急迫】利用同仁對薪資獎金的好奇心與時效限制誘使點擊。" },
-          { text: "http://hr-corp-portal.net/bonus/claim", type: "link", info: "🚨 【未加密超連結】使用 HTTP 未加密傳輸協定，且連結非公司 Intranet。" },
-          { text: "2026_Bonus_Detail.xlsm", type: "attachment", info: "🚨 【含巨集試算表】.xlsm 檔案可能包含開啟時自動執行的惡意 VBA 巨集。" }
+          { text: "hr-notice@corp-hr-portal.net", type: "sender", info: "🚨 【外部偽造域名】HR 通知不會由 corp-hr-portal.net 外部網域寄發。" },
+          { text: "請於本日下班前確認完畢", type: "urgency", info: "🚨 【時間誘誘誘騙】利用當天截止的迫切感，阻止受害者進行二次求證。" },
+          { text: "https://bonus-claim.corp-hr-portal.net/verify", type: "link", info: "🚨 【釣魚連結】誘騙輸入薪轉銀行帳密與身份證字號。" },
+          { text: "2026_Bonus_Detail.xlsm", type: "attachment", info: "🚨 【惡意巨集檔】帶有巨集 (XLSM) 的試算表，開啟將自動下載載荷。" }
         ],
-        body: `各位同仁：<br><br>2026 年度績效獎金已經試算完成，請點選下方連結確認您的獎金金額與撥款帳戶。請注意，<span class="hotspot" onclick="inspectHotspot(1)">務必於今日下班前確認</span>完畢。<br><br>線上查詢入口：<br><a href="#" class="text-brand-600 underline code-font hotspot" onclick="inspectHotspot(2)">http://hr-corp-portal.net/bonus/claim</a><br><br>或下載加密明細檔：<br><span class="inline-block bg-slate-100 p-2 rounded border border-slate-300 text-xs code-font hotspot" onclick="inspectHotspot(3)"><i class="fa-solid fa-file-excel text-emerald-600 mr-1"></i> 2026_Bonus_Detail.xlsm</span>`
+        body: `各位同仁：<br><br>2026 年個人績效獎金明細已出爐，<span class="hotspot" onclick="inspectHotspot(1)">請於本日下班前確認完畢</span>，逾期將延至下一季度發放。<br><br>請至獎金審核系統登入查看：<br><a href="#" class="text-brand-600 underline code-font hotspot" onclick="inspectHotspot(2)">https://bonus-claim.corp-hr-portal.net/verify</a><br><br>密碼試算表附件：<br><span class="inline-block bg-slate-100 p-2 rounded border border-slate-300 text-xs code-font hotspot" onclick="inspectHotspot(3)"><i class="fa-solid fa-file-excel text-emerald-600 mr-1"></i> 2026_Bonus_Detail.xlsm</span>`
+      },
+      {
+        title: "MFA 雙重驗證裝置更新 (Quishing 釣魚)",
+        sender: "M365 Security Team <no-reply@m365-authenticator-auth.org>",
+        subject: "【重要通知】系統安全升級，請掃描 QR Code 完成手機 MFA 驗證綁定",
+        date: "2026-10-27 11:00",
+        hotspots: [
+          { text: "no-reply@m365-authenticator-auth.org", type: "sender", info: "🚨 【假冒資安域名】發件人域名為非官方的 .org 網域！" },
+          { text: "若 12 小時內未完成驗證，系統將強制停用您的收發信權限", type: "urgency", info: "🚨 【威脅停用帳號】以停用帳號威脅，促使受害者急忙拿起手機掃碼。" },
+          { text: "QR Code 圖片", type: "link", info: "🚨 【Quishing QR Code 釣魚】利用圖片 QR 碼繞過傳統郵件網址過濾，引導至手機偽造登入頁。" },
+          { text: "Security_MFA_Notice.png", type: "attachment", info: "🚨 【可疑圖片附件】將文字與 QR 碼做成圖片檔以避開垃圾郵件文字掃描。" }
+        ],
+        body: `同仁您好：<br><br>因應近期的資安政策調整，全體員工必須於今日完成 MFA 行動裝置二次綁定。<span class="hotspot" onclick="inspectHotspot(1)">若 12 小時內未完成驗證，系統將強制停用您的收發信權限</span>。<br><br>請使用手機相機或 Authenticator App 掃描下方 QR Code 完成綁定：<br><div class="my-3 text-center border p-3 inline-block bg-slate-50 rounded border-slate-200 hotspot" onclick="inspectHotspot(2)"><img src="https://api.qrserver.com/v1/create-qr-code/?size=140x140&data=https://login.microsoftonline.security-verify-auth.xyz" alt="MFA QR Code" class="mx-auto my-1"><span class="text-[10px] text-slate-500 block">請用手機相機掃描驗證</span></div><br><br>隨信附上官方升級說明圖片：<br><span class="inline-block bg-slate-100 p-2 rounded border border-slate-300 text-xs code-font hotspot" onclick="inspectHotspot(3)"><i class="fa-solid fa-file-image text-blue-500 mr-1"></i> Security_MFA_Notice.png</span>`
+      },
+      {
+        title: "Google Drive 雲端儲存空間容量已滿警示",
+        sender: "Google Workspace Admin <drive-quota-alert@cloud-google-storage-check.com>",
+        subject: "【系統警告】您的企業雲端儲存空間已達 99%，郵件即將無法接收",
+        date: "2026-10-27 14:20",
+        hotspots: [
+          { text: "drive-quota-alert@cloud-google-storage-check.com", type: "sender", info: "🚨 【假冒 Google 網域】真正官方通知來源應為 google.com，非 cloud-google-storage-check.com。" },
+          { text: "郵件與雲端檔案即將於 6 小時內停止同步", type: "urgency", info: "🚨 【心理迫切感】製造信件即將遺失的恐慌，引誘使用者點擊擴充按鈕。" },
+          { text: "擴充空間圖片按鈕", type: "link", info: "🚨 【圖文釣魚按鈕】將警告圖片偽裝成系統原生提示，點擊即跳轉至 OAuth 授權詐騙頁面。" },
+          { text: "Storage_Usage_Report.pdf", type: "attachment", info: "🚨 【誘騙附件】偽造容量使用報告，內藏惡意重導向連結。" }
+        ],
+        body: `尊貴的用戶您好：<br><br>您的企業雲端硬碟容量已使用 <b>14.9 GB / 15 GB (99%)</b>，<span class="hotspot" onclick="inspectHotspot(1)">郵件與雲端檔案即將於 6 小時內停止同步</span>。<br><br><div class="my-3 p-4 bg-red-50 border border-red-200 rounded-lg max-w-sm hotspot" onclick="inspectHotspot(2)"><div class="flex items-center space-x-2 text-red-700 font-bold text-xs mb-1"><i class="fa-solid fa-triangle-exclamation"></i><span>儲存空間極度不足</span></div><div class="w-full bg-slate-200 rounded-full h-2 mb-2"><div class="bg-red-600 h-2 rounded-full" style="width: 99%"></div></div><p class="text-[11px] text-slate-600 mb-3">若不進行升級，您將無法接收新電子郵件。</p><a href="#" class="inline-block bg-brand-600 text-white text-xs px-3 py-1.5 rounded font-medium shadow-xs">申請免費企業擴充 50GB</a></div><br>附件為詳細空間使用報告：<br><span class="inline-block bg-slate-100 p-2 rounded border border-slate-300 text-xs code-font hotspot" onclick="inspectHotspot(3)"><i class="fa-solid fa-file-pdf text-red-600 mr-1"></i> Storage_Usage_Report.pdf</span>`
       }
     ];
 
-    // 20 題綜合測驗題目庫（完整對應 20 大攻擊向量）
-    const examQuestions = [
-      { id: 1, q: "當您收到簡訊稱「您的快遞包裹地址不全無法送達，請點擊連結更新」，最適當的處理方式為何？", options: ["A. 直接點擊簡訊網址輸入信用卡付手續費", "B. 切勿點擊，透過物流官方管道或 App 查證", "C. 轉發給同事請他幫忙點點看", "D. 直接回覆簡訊罵詐騙集團"], correct: 1 },
-      { id: 2, q: "攻擊者註冊與官方極為相似的網域（例如將 microsoft.com 替換為 micr0soft.com），此技術稱為什麼？", options: ["A. DDoS 攻擊", "B. 相似網域 (Lookalike Domain)", "C. SQL 注入", "D. 跨站腳本 (XSS)"], correct: 1 },
-      { id: 3, q: "收到 Authenticator 連續發出數十次未授權的 MFA 登入推送通知時，應如何處置？", options: ["A. 直接點擊同意以停止通知干擾", "B. 拒絕請求，並立即向 IT/資安團隊通報密碼可能已外洩", "C. 忽略它並關閉手機靜音", "D. 刪除 Authenticator App"], correct: 1 },
-      { id: 4, q: "實體公共場所的二維碼被貼紙覆蓋，掃描後要求輸入憑證，這屬於哪種社交工程攻擊？", options: ["A. QR Code 釣魚 (Quishing)", "B. 零日漏洞攻擊", "C. 中間人攻擊", "D. 勒索軟體"], correct: 0 },
-      { id: 5, q: "針對特定特定高階主管或關鍵人員，經過深度蒐集資料後量身打造的釣魚攻擊稱為？", options: ["A. 垃圾郵件 (Spam)", "B. 魚叉式釣魚 (Spear Phishing)", "C. 網路蠕蟲", "D. 緩衝區溢位"], correct: 1 },
-      { id: 6, q: "假冒銀行或 IT 客服來電，以電話語音誘騙民眾口述 OTP 簡訊驗證碼的手法稱為？", options: ["A. 語音釣魚 (Vishing)", "B. 水坑攻擊", "C. 門禁尾隨", "D. 垃圾搜尋"], correct: 0 },
-      { id: 7, q: "使用公共免費 USB 充電座時，手機資料可能被改裝線路偷取的威脅稱作？", options: ["A. 充電套取 (Juice Jacking)", "B. 惡意廣告", "C. 鍵盤側錄", "D. 藍芽蓋劫"], correct: 0 },
-      { id: 8, q: "攻擊者偽造失主身份向電信業者申請補發 SIM 卡，藉此攔截簡訊 2FA 驗證碼的手法為？", options: ["A. SIM 卡劫持 (SIM Swapping)", "B. 魚叉攻擊", "C. 惡意雙胞胎", "D. SEO 毒化"], correct: 0 },
-      { id: 9, q: "買下搜尋引擎關鍵字廣告，將假冒的軟體下載網頁放在搜尋結果第一筆的手法稱為？", options: ["A. SEO 毒化 (SEO Poisoning)", "B. DDoS 攻擊", "C. SQL 注入", "D. 零信任"], correct: 0 },
-      { id: 10, q: "在咖啡廳建立與官方 SSID 名稱相同的開放式免費 WiFi，藉此側錄連線者流量的手法為？", options: ["A. WiFi 惡意雙胞胎 (Evil Twin)", "B. 門禁尾隨", "C. 垃圾搜尋", "D. BadUSB"], correct: 0 },
-      { id: 11, q: "在公共場所或辦公室後方目視偷看他人輸入密碼或機密文件，此行為稱為？", options: ["A. 肩窺攻擊 (Shoulder Surfing)", "B. 語音釣魚", "C. 供應鏈攻擊", "D. 水坑攻擊"], correct: 0 },
-      { id: 12, q: "假冒外送員或搬運重物者，緊跟在持卡員工後方未經刷卡闖入管制區的手法稱為？", options: ["A. 門禁尾隨 (Tailgating)", "B. 簡訊釣魚", "C. SEO 毒化", "D. 充電套取"], correct: 0 },
-      { id: 13, q: "將植入模擬鍵盤 (HID) 韌體的隨身碟遺留在停車場誘使同仁插入電腦的手法為？", options: ["A. BadUSB 實體誘餌", "B. MFA 疲勞", "C. 惡意廣告", "D. 反向社交工程"], correct: 0 },
-      { id: 14, q: "入侵特定目標產業同仁經常造訪的合法第三方新聞網站並植入惡意腳本，此手法稱為？", options: ["A. 水坑攻擊 (Watering Hole)", "B. 魚叉攻擊", "C. 中間人攻擊", "D. 社交工程電話"], correct: 0 },
-      { id: 15, q: "攻擊者透過 LinkedIn 蒐集同仁的職稱、專案工具與出差行程，這屬於哪種公開情報蒐集？", options: ["A. OSINT 公開情報蒐集", "B. 橫向移動", "C. 權限提升", "D. 資料加密"], correct: 0 },
-      { id: 16, q: "從辦公室廢棄垃圾桶中翻找未經過碎紙機銷毀的客戶名單與紙本文件，此行為稱為？", options: ["A. 垃圾搜尋 (Dumpster Diving)", "B. 惡意軟體", "C. 魚叉釣魚", "D. 密碼暴力破解"], correct: 0 },
-      { id: 17, q: "攻擊者預先編造角色（如外聘審計員）與虛構劇本來獲取信任的手法稱為？", options: ["A. 藉口劇本欺詐 (Pretexting)", "B. Port Scanning", "C. SQLi", "D. Fuzzing"], correct: 0 },
-      { id: 18, q: "攻擊防禦較弱的外包商或印表機維護廠商，藉其信任管道滲透目標企業內網稱為？", options: ["A. 供應鏈攻擊 (Supply Chain Attack)", "B. 惡意雙胞胎", "C. 肩窺攻擊", "D. 簡訊釣魚"], correct: 0 },
-      { id: 19, q: "買下正規新聞網頁的廣告欄位，並投放帶有惡意跳轉腳本的橫幅廣告，此手法稱為？", options: ["A. 釣魚式惡意廣告 (Malvertising)", "B. SEO 優化", "C. 橫幅行銷", "D. 品牌聯播"], correct: 0 },
-      { id: 20, q: "先發動攻擊讓目標系統癱瘓，再假冒總部 IT 救星主動協助，讓受害者主動獻出帳密的手法稱為？", options: ["A. 反向社交工程 (Reverse Social Eng)", "B. 門禁尾隨", "C. 垃圾搜尋", "D. 簡訊釣魚"], correct: 0 }
+    // 20 題綜合測驗題目庫
+    const examQuestionsData = [
+      { q: "1. 當收到寄件人為 support@microsoft-verify-security.com 的「帳號過期重設」信件時，第一步應如何處置？", options: ["點擊信中連結並輸入原密碼進行驗證", "直接回信詢問對方是否為官方 IT", "檢查發件人網域，透過官方既有管道或客服求證，不隨意點擊連結", "將信件轉寄給全公司同仁提醒大家注意"], ans: 2 },
+      { q: "2. 什麼是 BEC (商業郵件詐騙) 的最典型特徵？", options: ["信件含有大量的廣告宣傳圖片", "冒充 CEO 或合作廠商，急迫要求變更匯款帳號或轉帳", "收到大量密碼輸入錯誤的系統自動通知", "信件內附帶 MP3 音訊檔"], ans: 1 },
+      { q: "3. 關於 Quishing (QR Code 釣魚)，以下何者為最安全的防禦習慣？", options: ["只要用手機內建相機掃描就絕對安全", "掃描後無視網址直接輸入個人帳號密碼", "掃描後仔細檢查預覽網址是否為官方正版網域", "將二維碼列印出來貼在桌上"], ans: 2 },
+      { q: "4. 當遇上 MFA 疲勞轟炸攻擊 (MFA Push Fatigue) 時，正確的做法是？", options: ["按下「同意」以讓推播停止跳出", "拒絕同意，並立刻聯絡 SOC/IT 單位並變更密碼", "直接關機 24 小時", "把手機藍芽關閉"], ans: 1 },
+      { q: "5. 應對 AI Deepfake 語音/視訊詐騙（如高層指示緊急轉帳），最有效的確認方式為何？", options: ["要求對方在視訊中比心手勢", "透過預先約定的安全暗號/線下已知電話進行二次確認", "只聽聲音不看畫面", "請對方傳送一張當天報紙的照片"], ans: 1 },
+      { q: "6. 何謂「Juice Jacking (充電套取)」攻擊？", options: ["利用果汁飲料倒在伺服器上造成短路", "在公共充電站或改裝充電線上側錄傳輸資料或植入惡意程式", "過度充電導致電池膨脹的資安術語", "竊取電信公司基地台電力"], ans: 1 },
+      { q: "7. 關於 SIM Swapping (SIM 卡劫持)，駭客主要的攻擊目的為何？", options: ["偷取手機內的實體 SIM 卡晶片", "接管目標的手機門號以攔截簡訊 2FA 驗證碼", "免費使用目標的 5G 上網吃到飽", "遠端遙控目標的手機發送垃圾簡訊"], ans: 1 },
+      { q: "8. 搜尋引擎毒化 (SEO Poisoning) 通常如何吸引受害者上鉤？", options: ["在社群媒體發送大量垃圾留言", "購買熱門關鍵字贊助廣告，將假冒軟體下載頁排在搜尋結果最頂端", "透過黑客攻陷 Google 總部伺服器", "發送實體郵件至公司信箱"], ans: 1 },
+      { q: "9. 連接公共區域未加密 WiFi 時，若未開啟 VPN，主要面臨什麼風險？", options: ["電腦螢幕亮度自動調高", "傳輸流量可能遭中間人 (MitM) 側錄或跳轉至假登入頁", "手機電池壽命永久受減損", "儲存空間被自動清空"], ans: 1 },
+      { q: "10. 當有陌生人未配戴識別證，跟隨在您身後準備進入公司門禁管制區，應如何應對？", options: ["基於禮貌貼心幫對方扶住大門", "禮貌請對方至前台刷卡或進行訪客登記，落實一人一卡", "無視對方直接快速走進去", "幫對方代刷自己的識別證"], ans: 1 },
+      { q: "11. 拾獲外殼印有「機密薪資表」的未知 USB 隨身碟，正確處置方式為何？", options: ["插上自己電腦看看裡面有什麼資料", "插上同事電腦以保護自己的電腦", "交由資安或 IT 部門進行隔離檢測，切勿隨意插入電腦", "格式化後當作個人隨身碟使用"], ans: 2 },
+      { q: "12. 什麼是「水坑攻擊 (Watering Hole Attack)」？", options: ["在公司茶水間安裝竊聽器", "入侵目標同仁經常造訪的合法第三方網站並植入惡意腳本", "將惡意程式隱藏在水費帳單 PDF 中", "攻擊供水系統的工業控制設備"], ans: 1 },
+      { q: "13. 攻擊者利用 LinkedIn 蒐集員工職稱、專案工具等資訊，這屬於哪種前置攻擊手段？", options: ["OSINT (公開來源情報蒐集)", "DDoS 阻斷服務攻擊", "SQL Injection 注入攻擊", "Buffer Overflow 緩衝區溢位"], ans: 0 },
+      { q: "14. 公司棄置敏感紙本文件時，最安全的銷毀方式為何？", options: ["直接揉成一團丟入一般垃圾桶", "使用顆粒狀碎紙機進行細碎銷毀或保密回收", "撕成兩半後丟入回收桶", "堆疊在茶水間角落等待清潔人員"], ans: 1 },
+      { q: "15. 攻擊者編造「總公司法遵稽核員」身分，致電索取內部系統權限，這屬於哪種社交工程？", options: ["Pretexting (藉口劇本欺詐)", "Phishing (普通網路釣魚)", "Ransomware (勒索軟體)", "Man-in-the-Middle (中間人攻擊)"], ans: 0 },
+      { q: "16. 關於供應鏈社交工程，以下敘述何者正確？", options: ["小廠商安全防禦較弱，常被駭客當作跳板滲透大客戶", "只要大公司自身資安做好，就不需要管外包廠商的安全", "供應鏈攻擊只會發生在實體貨運過程", "外包商的郵件帳號絕對不可能被盜用"], ans: 0 },
+      { q: "17. 何謂「反向社交工程 (Reverse Social Engineering)」？", options: ["受害者主動向攻擊者發動網路攻擊", "攻擊者先製造故障，再偽裝成技術專家等待受害者主動求助", "退回所有釣魚郵件給寄件者", "從內網向外網發送大量測試封包"], ans: 1 },
+      { q: "18. 在高鐵或咖啡廳開啟機密文件時，為防止肩窺攻擊 (Shoulder Surfing)，應採取何種防護？", options: ["將螢幕亮度調至最高", "張貼防窺貼膜並注意身後異常停留人員", "開啟電腦喇叭播放音樂", "使用雙螢幕進行工作"], ans: 1 },
+      { q: "19. 收到帶有 `.pdf.exe` 雙副檔名的郵件附件時，代表什麼含意？", options: ["這是經過高度壓縮的安全 PDF 文件", "這是偽裝成 PDF 的可執行檔，極可能是惡意程式", "這是特殊版本的 Adobe Reader 檔案", "這代表檔案被加密保護"], ans: 1 },
+      { q: "20. 企業推行資安零信任 (Zero Trust) 架構的核心原則為何？", options: ["永不信任，始終驗證 (Never Trust, Always Verify)", "內網絕對安全，外網絕對危險", "只要輸入正確密碼就永久信任", "只信任 CEO 的電腦"], ans: 0 }
     ];
 
-    let currentKnowledgeIdx = 0;
     let currentPhishingIdx = 0;
     let currentSandboxIdx = 0;
-    let examUserAnswers = {};
-    let teacherAnswerKeys = null;
-    let localScoresList = JSON.parse(localStorage.getItem('social_eng_scores')) || [];
+
+    // ==========================================
+    // INITIALIZATION & TAB NAVIGATION
+    // ==========================================
 
     window.onload = function() {
-      renderUserSessionBadge();
+      renderUserSession();
       renderKnowledgeCards();
       renderKnowledgeDetail(0);
-      renderPhishingSelector();
-      renderPhishingTemplate(0);
-      renderSandboxPortal(0);
-      renderAllExamQuestions();
+      renderPhishingSimulator();
+      renderSandboxPortal();
+      renderExamQuestions();
+      updateTeacherDashboard();
     };
+
+    function renderUserSession() {
+      const badge = document.getElementById('user-session-badge');
+      if (currentUser) {
+        badge.innerHTML = `
+          <div class="bg-brand-50 border border-brand-200 text-brand-700 px-3 py-1 rounded-full text-xs font-medium flex items-center space-x-2">
+            <i class="fa-solid fa-user-check"></i>
+            <span>${currentUser.class} ${currentUser.seat}號 ${currentUser.name}</span>
+            <button onclick="logoutUser()" class="text-slate-400 hover:text-red-500 ml-1"><i class="fa-solid fa-right-from-bracket"></i></button>
+          </div>
+        `;
+      } else {
+        badge.innerHTML = `
+          <span class="text-xs text-slate-400"><i class="fa-solid fa-circle-info mr-1"></i>測驗時請填寫個人學員資料</span>
+        `;
+      }
+    }
+
+    function logoutUser() {
+      localStorage.removeItem('social_eng_current_user');
+      currentUser = null;
+      renderUserSession();
+    }
 
     function switchTab(tabId) {
       document.querySelectorAll('.tab-content').forEach(el => el.classList.add('hidden'));
@@ -694,108 +744,31 @@
       const activeNav = document.getElementById(`nav-${tabId}`);
       activeNav.classList.remove('border-transparent', 'text-slate-500');
       activeNav.classList.add('border-brand-600', 'text-brand-600');
-
-      if (tabId === 'teacher') {
-        checkTeacherAuthState();
-      }
     }
 
-    function renderUserSessionBadge() {
-      const badgeContainer = document.getElementById('user-session-badge');
-      if (currentUser) {
-        if (currentUser.role === 'teacher') {
-          badgeContainer.innerHTML = `
-            <span class="px-2.5 py-1 text-xs bg-amber-100 text-amber-800 font-semibold rounded-md border border-amber-200 flex items-center">
-              <i class="fa-solid fa-user-shield mr-1"></i> 教師身分
-            </span>
-            <button onclick="logout()" class="text-xs text-slate-500 hover:text-red-600 px-2 py-1"><i class="fa-solid fa-right-from-bracket"></i> 登出</button>
-          `;
-        } else {
-          badgeContainer.innerHTML = `
-            <span class="px-2.5 py-1 text-xs bg-brand-50 text-brand-700 font-medium rounded-md border border-brand-200">
-              <i class="fa-solid fa-graduation-cap mr-1"></i> ${currentUser.className} | ${currentUser.seatNo}號 ${currentUser.name}
-            </span>
-            <button onclick="logout()" class="text-xs text-slate-500 hover:text-red-600 px-2 py-1"><i class="fa-solid fa-right-from-bracket"></i> 切換</button>
-          `;
-        }
-      } else {
-        badgeContainer.innerHTML = `
-          <button onclick="switchTab('exam')" class="px-3 py-1.5 text-xs font-medium text-brand-600 bg-brand-50 hover:bg-brand-100 rounded-lg border border-brand-200 transition">學員測驗登入</button>
-          <button onclick="switchTab('teacher')" class="px-3 py-1.5 text-xs font-medium text-slate-700 bg-slate-100 hover:bg-slate-200 rounded-lg border border-slate-300 transition">教師登入</button>
-        `;
-      }
-    }
-
-    function logout() {
-      currentUser = null;
-      localStorage.removeItem('social_eng_current_user');
-      renderUserSessionBadge();
-      alert("已成功登出系統。");
-      switchTab('knowledge');
-    }
-
-    async function loginTeacher() {
-      const pwdInput = document.getElementById('teacher-password-input').value.trim();
-      if (!pwdInput) {
-        alert("請輸入教師管理密碼！");
-        return;
-      }
-
-      try {
-        const res = await fetch(`${gasApiUrl}?action=verifyTeacherPassword&password=${encodeURIComponent(pwdInput)}`);
-        const result = await res.json();
-        if (result.status === "success") {
-          currentUser = { role: 'teacher', name: '資安教師' };
-          localStorage.setItem('social_eng_current_user', JSON.stringify(currentUser));
-          renderUserSessionBadge();
-          checkTeacherAuthState();
-          return;
-        } else {
-          alert("❌ 密碼錯誤！雲端驗證失敗。");
-          return;
-        }
-      } catch (e) {
-        console.error(e);
-        alert("⚠️ GAS 網路請求失敗，請檢查網路連線。");
-        return;
-      }
-    }
-
-    function checkTeacherAuthState() {
-      const lockedView = document.getElementById('teacher-auth-locked');
-      const unlockedView = document.getElementById('teacher-dashboard-unlocked');
-
-      if (currentUser && currentUser.role === 'teacher') {
-        lockedView.classList.add('hidden');
-        unlockedView.classList.remove('hidden');
-        renderTeacherDashboard();
-      } else {
-        lockedView.classList.remove('hidden');
-        unlockedView.classList.add('hidden');
-      }
-    }
+    // ==========================================
+    // TAB 1: KNOWLEDGE BASE
+    // ==========================================
 
     function renderKnowledgeCards() {
       const container = document.getElementById('knowledge-cards');
-      container.innerHTML = knowledgeData.map((item, idx) => `
-        <div onclick="renderKnowledgeDetail(${idx})" class="cursor-pointer bg-white p-3 rounded-xl border ${currentKnowledgeIdx === idx ? 'border-brand-600 ring-2 ring-brand-500/20' : 'border-slate-200 hover:border-slate-300'} shadow-2xs transition">
-          <div class="w-8 h-8 rounded-lg ${currentKnowledgeIdx === idx ? 'bg-brand-600 text-white' : 'bg-slate-100 text-slate-600'} flex items-center justify-center mb-2 text-sm">
-            <i class="fa-solid ${item.icon}"></i>
+      container.innerHTML = knowledgeData.map((item, index) => `
+        <button onclick="renderKnowledgeDetail(${index})" class="text-left p-3 rounded-lg border border-slate-200 hover:border-brand-500 hover:shadow-sm bg-white transition flex flex-col justify-between h-28">
+          <div class="flex items-center space-x-2 text-brand-600">
+            <i class="fa-solid ${item.icon} text-lg"></i>
+            <span class="text-xs font-bold text-slate-900 truncate">${item.title}</span>
           </div>
-          <h3 class="text-xs font-bold text-slate-900 truncate">${item.title}</h3>
-        </div>
+          <p class="text-[11px] text-slate-500 line-clamp-2 mt-1">${item.short}</p>
+        </button>
       `).join('');
     }
 
-    function renderKnowledgeDetail(idx) {
-      currentKnowledgeIdx = idx;
-      renderKnowledgeCards();
-      const item = knowledgeData[idx];
-      const container = document.getElementById('knowledge-detail-card');
-
-      container.innerHTML = `
-        <div class="flex items-center space-x-3 border-b border-slate-200 pb-4 mb-4">
-          <div class="w-10 h-10 rounded-xl bg-brand-50 text-brand-600 flex items-center justify-center text-lg">
+    function renderKnowledgeDetail(index) {
+      const item = knowledgeData[index];
+      const card = document.getElementById('knowledge-detail-card');
+      card.innerHTML = `
+        <div class="flex items-center space-x-3 border-b border-slate-100 pb-4 mb-4">
+          <div class="w-12 h-12 rounded-xl bg-brand-50 text-brand-600 flex items-center justify-center text-2xl">
             <i class="fa-solid ${item.icon}"></i>
           </div>
           <div>
@@ -804,67 +777,65 @@
           </div>
         </div>
 
-        <div class="grid grid-cols-1 md:grid-cols-2 gap-6 text-xs">
-          <div>
-            <h4 class="font-bold text-slate-800 mb-2 flex items-center">
-              <i class="fa-solid fa-link text-brand-600 mr-2"></i>駭客攻擊鏈拆解 (Attack Chain)
-            </h4>
-            <div class="bg-slate-50 p-3 rounded-lg border border-slate-200 code-font text-slate-700 leading-relaxed">
-              ${item.chain}
+        <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+          <div class="space-y-4">
+            <div>
+              <h4 class="text-xs font-bold text-slate-500 uppercase tracking-wider mb-2">攻擊入侵鏈條 (Kill Chain)</h4>
+              <div class="bg-slate-50 border border-slate-200 rounded-lg p-3 text-xs code-font text-slate-700">
+                ${item.chain}
+              </div>
             </div>
 
-            <h4 class="font-bold text-slate-800 mt-4 mb-2 flex items-center">
-              <i class="fa-solid fa-flag text-red-500 mr-2"></i>紅旗特徵 (Red Flags)
-            </h4>
-            <ul class="space-y-1.5 list-disc list-inside text-slate-600">
-              ${item.redflags.map(r => `<li>${r}</li>`).join('')}
-            </ul>
+            <div>
+              <h4 class="text-xs font-bold text-slate-500 uppercase tracking-wider mb-2">關鍵紅旗警訊 (Red Flags)</h4>
+              <ul class="space-y-1.5 text-xs text-slate-600">
+                ${item.redflags.map(rf => `<li class="flex items-start"><i class="fa-solid fa-triangle-exclamation text-amber-500 mr-2 mt-0.5"></i>${rf}</li>`).join('')}
+              </ul>
+            </div>
           </div>
 
-          <div>
-            <h4 class="font-bold text-slate-800 mb-2 flex items-center">
-              <i class="fa-solid fa-masks-theater text-amber-500 mr-2"></i>真實案例實錄
-            </h4>
-            <p class="bg-amber-50/60 border border-amber-200 p-3 rounded-lg text-amber-900 leading-relaxed">
-              ${item.case}
-            </p>
+          <div class="space-y-4">
+            <div>
+              <h4 class="text-xs font-bold text-slate-500 uppercase tracking-wider mb-2">真實入侵案例剖析</h4>
+              <div class="bg-amber-50/50 border border-amber-200 rounded-lg p-3 text-xs text-amber-900 leading-relaxed">
+                ${item.case}
+              </div>
+            </div>
 
-            <h4 class="font-bold text-slate-800 mt-4 mb-2 flex items-center">
-              <i class="fa-solid fa-shield-virus text-emerald-600 mr-2"></i>防禦與處置對策
-            </h4>
-            <p class="bg-emerald-50/60 border border-emerald-200 p-3 rounded-lg text-emerald-900 leading-relaxed">
-              ${item.defense}
-            </p>
+            <div>
+              <h4 class="text-xs font-bold text-slate-500 uppercase tracking-wider mb-2">企業/個人實務防禦控制措施</h4>
+              <div class="bg-emerald-50/50 border border-emerald-200 rounded-lg p-3 text-xs text-emerald-900 leading-relaxed">
+                <i class="fa-solid fa-shield-check text-emerald-600 mr-1"></i>${item.defense}
+              </div>
+            </div>
           </div>
         </div>
       `;
     }
 
-    function renderPhishingSelector() {
-      const container = document.getElementById('phishing-selector');
-      container.innerHTML = phishingTemplates.map((item, idx) => `
-        <button onclick="renderPhishingTemplate(${idx})" class="px-3 py-1.5 text-xs font-medium rounded-lg whitespace-nowrap border ${currentPhishingIdx === idx ? 'bg-brand-600 text-white border-brand-600 shadow-2xs' : 'bg-white text-slate-600 border-slate-300 hover:bg-slate-50'} transition">
-          情境 ${idx+1}: ${item.title.substring(0, 10)}...
+    // ==========================================
+    // TAB 2: PHISHING SIMULATOR
+    // ==========================================
+
+    function renderPhishingSimulator() {
+      const selector = document.getElementById('phishing-selector');
+      selector.innerHTML = phishingTemplates.map((tpl, i) => `
+        <button onclick="changePhishingTemplate(${i})" class="px-3 py-1.5 text-xs rounded-lg font-medium whitespace-nowrap transition ${i === currentPhishingIdx ? 'bg-brand-600 text-white shadow-xs' : 'bg-slate-100 text-slate-600 hover:bg-slate-200'}">
+          教案 ${i+1}: ${tpl.title}
         </button>
       `).join('');
-    }
 
-    function renderPhishingTemplate(idx) {
-      currentPhishingIdx = idx;
-      renderPhishingSelector();
-      const data = phishingTemplates[idx];
-
-      document.getElementById('phishing-header-title').innerText = `Simulation Template: ${data.title}`;
-      const container = document.getElementById('phishing-body-container');
-
-      container.innerHTML = `
-        <div class="border-b border-slate-200 pb-4 mb-4 text-xs space-y-1">
-          <div class="flex"><span class="w-16 text-slate-400 font-semibold">主旨:</span><span class="font-bold text-slate-900">${data.subject}</span></div>
-          <div class="flex"><span class="w-16 text-slate-400 font-semibold">發件人:</span><span class="hotspot code-font text-red-600" onclick="inspectHotspot(0)">${data.sender}</span></div>
-          <div class="flex"><span class="w-16 text-slate-400 font-semibold">日期:</span><span class="text-slate-500">${data.date}</span></div>
+      const tpl = phishingTemplates[currentPhishingIdx];
+      document.getElementById('phishing-header-title').innerText = tpl.title;
+      const bodyContainer = document.getElementById('phishing-body-container');
+      bodyContainer.innerHTML = `
+        <div class="border-b border-slate-200 pb-4 mb-4 text-xs space-y-1.5">
+          <div class="flex"><span class="w-16 font-semibold text-slate-400">發件人：</span><span class="hotspot code-font text-slate-800" onclick="inspectHotspot(0)">${tpl.sender}</span></div>
+          <div class="flex"><span class="w-16 font-semibold text-slate-400">主旨：</span><span class="font-bold text-slate-900">${tpl.subject}</span></div>
+          <div class="flex"><span class="w-16 font-semibold text-slate-400">日期：</span><span class="text-slate-500">${tpl.date}</span></div>
         </div>
-        <div class="text-sm leading-relaxed text-slate-800">
-          ${data.body}
+        <div class="text-sm text-slate-700 leading-relaxed">
+          ${tpl.body}
         </div>
       `;
 
@@ -872,62 +843,82 @@
       document.getElementById('assessment-result').classList.add('hidden');
     }
 
-    function inspectHotspot(hotspotIdx) {
-      const currentData = phishingTemplates[currentPhishingIdx];
-      const info = currentData.hotspots[hotspotIdx];
-      const inspector = document.getElementById('hotspot-inspector');
+    function changePhishingTemplate(idx) {
+      currentPhishingIdx = idx;
+      renderPhishingSimulator();
+    }
 
+    function inspectHotspot(hotspotIdx) {
+      const tpl = phishingTemplates[currentPhishingIdx];
+      const hs = tpl.hotspots[hotspotIdx];
+      const inspector = document.getElementById('hotspot-inspector');
       inspector.innerHTML = `
-        <div class="space-y-2">
-          <div class="flex items-center space-x-2">
-            <span class="px-2 py-0.5 text-[10px] font-bold rounded bg-red-100 text-red-800 uppercase">${info.type}</span>
-            <span class="text-xs font-bold text-slate-800">鑑別點分析</span>
-          </div>
-          <p class="text-xs text-slate-700 leading-relaxed font-medium">${info.info}</p>
-        </div>
+        <div class="text-amber-800 font-bold mb-1"><i class="fa-solid fa-flag text-red-500 mr-1.5"></i>偵測到紅旗威脅特徵</div>
+        <div class="text-xs text-slate-700 leading-relaxed mt-2">${hs.info}</div>
       `;
     }
 
-    function checkAssessment(isPhishingChosen) {
-      const resultBox = document.getElementById('assessment-result');
-      resultBox.classList.remove('hidden', 'bg-red-50', 'text-red-800', 'bg-emerald-50', 'text-emerald-800');
-
-      if (isPhishingChosen) {
-        resultBox.classList.add('bg-emerald-50', 'text-emerald-800', 'border', 'border-emerald-200');
-        resultBox.innerHTML = `<i class="fa-solid fa-circle-check text-emerald-600 mr-1"></i> <strong>回答正確！</strong> 這是一封典型的社交工程釣魚郵件。通報 SOC 團隊是最佳處理流程。`;
+    function checkAssessment(isPhishingChoice) {
+      const resultDiv = document.getElementById('assessment-result');
+      resultDiv.classList.remove('hidden');
+      if (isPhishingChoice) {
+        resultDiv.className = "mt-4 p-3 rounded-lg text-xs bg-emerald-50 border border-emerald-200 text-emerald-800";
+        resultDiv.innerHTML = `<i class="fa-solid fa-circle-check text-emerald-600 mr-1.5"></i><b>判斷正確！</b>這是一封標準社交工程釣魚郵件。通報 SOC/IT 團隊可防止其他同仁受害。`;
       } else {
-        resultBox.classList.add('bg-red-50', 'text-red-800', 'border', 'border-red-200');
-        resultBox.innerHTML = `<i class="fa-solid fa-circle-xmark text-red-600 mr-1"></i> <strong>判斷錯誤！</strong> 這封郵件包含偽造發件人網域與惡意連結，若按指示操作將會導致帳密遭竊。`;
+        resultDiv.className = "mt-4 p-3 rounded-lg text-xs bg-red-50 border border-red-200 text-red-800";
+        resultDiv.innerHTML = `<i class="fa-solid fa-circle-xmark text-red-600 mr-1.5"></i><b>判斷錯誤！</b>此郵件含有偽造發件人網域與惡意連結，若照指示操作將導致憑證遭竊或中木馬。`;
       }
     }
+
+    // ==========================================
+    // TAB 3: SANDBOX
+    // ==========================================
 
     const sandboxPortals = [
       {
         name: "Microsoft 365",
-        fakeUrl: "https://login.microsoftonline.security-verify-auth.xyz/oauth2/login",
-        logo: '<i class="fa-brands fa-microsoft text-red-500 text-3xl"></i>',
-        title: "登入您的 Microsoft 帳號",
-        subtitle: "存取 Outlook、OneDrive 與 Teams 企業服務",
-        inputLabel: "工作、學校或個人 Microsoft 帳號",
-        inputPlaceholder: "user@company.com"
+        url: "https://login.microsoftonline.security-verify-auth.xyz/oauth2",
+        html: `
+          <div class="space-y-4">
+            <div class="flex items-center space-x-2">
+              <div class="grid grid-cols-2 gap-0.5 w-5 h-5">
+                <div class="bg-[#f25022]"></div><div class="bg-[#7fba00]"></div>
+                <div class="bg-[#00a4ef]"></div><div class="bg-[#ffb900]"></div>
+              </div>
+              <span class="text-base font-semibold text-slate-700">Microsoft</span>
+            </div>
+            <h3 class="text-xl font-bold text-slate-900">登入您的帳戶</h3>
+            <input type="text" id="sb-input-user" placeholder="電子郵件、電話或 Skype" class="w-full text-sm border border-slate-300 rounded px-3 py-2 focus:border-brand-600 focus:outline-none">
+            <input type="password" id="sb-input-pass" placeholder="密碼" class="w-full text-sm border border-slate-300 rounded px-3 py-2 focus:border-brand-600 focus:outline-none">
+            <button onclick="simulatePhishSubmit()" class="w-full py-2 bg-[#0067b8] hover:bg-[#005da6] text-white font-semibold text-sm rounded transition">下一步</button>
+          </div>
+        `
       },
       {
         name: "Google Workspace",
-        fakeUrl: "https://accounts.google.com.user-verify-session.top/signin",
-        logo: '<i class="fa-brands fa-google text-blue-500 text-3xl"></i>',
-        title: "登入 Google 帳戶",
-        subtitle: "前往 Gmail 與雲端硬碟",
-        inputLabel: "電子郵件地址或電話號碼",
-        inputPlaceholder: "user@gmail.com"
+        url: "https://accounts.google.com.account-security-check.info/signin",
+        html: `
+          <div class="space-y-4 text-center">
+            <span class="text-2xl font-bold tracking-tight"><span class="text-blue-500">G</span><span class="text-red-500">o</span><span class="text-yellow-500">o</span><span class="text-blue-500">g</span><span class="text-green-500">l</span><span class="text-red-500">e</span></span>
+            <h3 class="text-lg font-medium text-slate-900">登入以繼續使用 Gmail</h3>
+            <input type="text" id="sb-input-user" placeholder="電子郵件地址或電話號碼" class="w-full text-sm border border-slate-300 rounded-md px-3 py-2.5 focus:border-blue-500 focus:outline-none">
+            <input type="password" id="sb-input-pass" placeholder="輸入您的密碼" class="w-full text-sm border border-slate-300 rounded-md px-3 py-2.5 focus:border-blue-500 focus:outline-none">
+            <button onclick="simulatePhishSubmit()" class="w-full py-2.5 bg-blue-600 hover:bg-blue-700 text-white font-medium text-sm rounded-md transition">繼續</button>
+          </div>
+        `
       },
       {
         name: "Meta Business",
-        fakeUrl: "https://facebook.com-business-support-appeal.info/verify",
-        logo: '<i class="fa-brands fa-facebook text-brand-600 text-3xl"></i>',
-        title: "Meta 企業管理平台帳號驗證",
-        subtitle: "您的粉絲專頁涉及違規，請立即登入進行申訴",
-        inputLabel: "註冊電子郵件或手機號碼",
-        inputPlaceholder: "admin@business.com"
+        url: "https://facebook.business-manager-verify.com/login",
+        html: `
+          <div class="space-y-4">
+            <h3 class="text-2xl font-extrabold text-blue-600">facebook</h3>
+            <p class="text-xs text-slate-500">商業管理員企業帳號驗證登入</p>
+            <input type="text" id="sb-input-user" placeholder="電子郵件地址或手機號碼" class="w-full text-sm border border-slate-300 rounded-lg px-3 py-2.5 focus:outline-none focus:ring-1 focus:ring-blue-500">
+            <input type="password" id="sb-input-pass" placeholder="密碼" class="w-full text-sm border border-slate-300 rounded-lg px-3 py-2.5 focus:outline-none focus:ring-1 focus:ring-blue-500">
+            <button onclick="simulatePhishSubmit()" class="w-full py-2.5 bg-blue-600 hover:bg-blue-700 text-white font-bold text-sm rounded-lg transition">登入</button>
+          </div>
+        `
       }
     ];
 
@@ -941,93 +932,50 @@
           btn.className = "px-3.5 py-1.5 text-xs font-semibold rounded-lg border bg-white text-slate-700 border-slate-300 hover:bg-slate-50";
         }
       }
-      renderSandboxPortal(idx);
+      renderSandboxPortal();
     }
 
-    function renderSandboxPortal(idx) {
-      const data = sandboxPortals[idx];
-      document.getElementById('sandbox-fake-url').innerText = data.fakeUrl;
-
-      const container = document.getElementById('sandbox-portal-body');
-      container.innerHTML = `
-        <div class="text-center mb-6">
-          <div class="mb-2">${data.logo}</div>
-          <h3 class="text-lg font-bold text-slate-900">${data.title}</h3>
-          <p class="text-xs text-slate-500 mt-1">${data.subtitle}</p>
-        </div>
-
-        <form onsubmit="handleSandboxSubmit(event)" class="space-y-4">
-          <div>
-            <label class="block text-xs font-semibold text-slate-700 mb-1">${data.inputLabel}</label>
-            <input type="text" id="sb-input-user" required placeholder="${data.inputPlaceholder}" class="w-full text-xs border border-slate-300 rounded-lg px-3 py-2.5 focus:ring-2 focus:ring-brand-500 focus:outline-none">
-          </div>
-          <div>
-            <label class="block text-xs font-semibold text-slate-700 mb-1">輸入密碼</label>
-            <input type="password" id="sb-input-pass" required placeholder="••••••••" class="w-full text-xs border border-slate-300 rounded-lg px-3 py-2.5 focus:ring-2 focus:ring-brand-500 focus:outline-none">
-          </div>
-          <button type="submit" class="w-full py-2.5 bg-brand-600 hover:bg-brand-700 text-white font-semibold text-xs rounded-lg shadow-sm transition">
-            登入 (Sign In)
-          </button>
-        </form>
-      `;
-
-      document.getElementById('sandbox-console').innerHTML = `<p class="text-slate-500">[SYSTEM]: 沙盒側錄終端已就緒。請在左側輸入資料並點擊登入試驗。</p>`;
+    function renderSandboxPortal() {
+      const portal = sandboxPortals[currentSandboxIdx];
+      document.getElementById('sandbox-fake-url').innerText = portal.url;
+      document.getElementById('sandbox-portal-body').innerHTML = portal.html;
       document.getElementById('sandbox-alert-card').classList.add('hidden');
     }
 
-    function handleSandboxSubmit(e) {
-      e.preventDefault();
-      const userInput = document.getElementById('sb-input-user').value;
-      const passInput = document.getElementById('sb-input-pass').value;
-      const portal = sandboxPortals[currentSandboxIdx];
+    function simulatePhishSubmit() {
+      const u = document.getElementById('sb-input-user').value || 'user@example.com';
+      const p = document.getElementById('sb-input-pass').value || 'P@ssw0rd123';
+      const consoleEl = document.getElementById('sandbox-console');
 
-      const consoleBox = document.getElementById('sandbox-console');
-      const timeStr = new Date().toLocaleTimeString();
-
-      consoleBox.innerHTML = `
-        <p class="text-amber-400">[${timeStr}] ⚠️ HTTP POST Intercepted!</p>
-        <p class="text-slate-300">Target Host: <span class="text-red-400 font-bold">${portal.fakeUrl}</span></p>
-        <p class="text-slate-300">Payload Data Exfiltrated:</p>
-        <div class="bg-slate-950 p-2.5 rounded border border-slate-800 text-emerald-400 my-1">
-          {<br>
-          &nbsp;&nbsp;"captured_user": "${userInput}",<br>
-          &nbsp;&nbsp;"captured_pass": "${passInput}",<br>
-          &nbsp;&nbsp;"user_agent": "${navigator.userAgent.substring(0, 40)}...",<br>
-          &nbsp;&nbsp;"attack_vector": "Lookalike Domain Credential Harvesting"<br>
-          }
-        </div>
-        <p class="text-red-400 font-bold">[CRITICAL]: 憑證已成功傳輸至攻擊者資料庫！</p>
+      const time = new Date().toLocaleTimeString();
+      consoleEl.innerHTML = `
+        <p class="text-red-400">[${time}] [EXFILTRATION]: HTTP POST /api/harvest</p>
+        <p class="text-emerald-400">[PAYLOAD]: { "account": "${u}", "password": "${p}", "ip": "1.2.3.4", "ua": "Mozilla/5.0" }</p>
+        <p class="text-amber-300">[STATUS]: 200 OK - Credentials Stolen Successfully.</p>
       `;
 
       document.getElementById('sandbox-alert-card').classList.remove('hidden');
-      document.getElementById('sandbox-alert-text').innerText = `警告：您在網頁中輸入的帳戶 [${userInput}] 與密碼數據已遭側錄！請注意該 URL 網域為偽造的 Lookalike Domain。`;
     }
 
     // ==========================================
-    // 20 題綜合測驗 (全數一頁展現模式)
+    // TAB 4: COMPREHENSIVE EXAM (20 QUESTIONS)
     // ==========================================
-    function renderAllExamQuestions() {
-      const listContainer = document.getElementById('exam-questions-list');
-      listContainer.innerHTML = examQuestions.map((qData, qIdx) => `
-        <div class="bg-slate-50 border border-slate-200 rounded-xl p-5 space-y-3">
-          <div class="flex items-start space-x-3">
-            <span class="px-2.5 py-1 bg-brand-600 text-white font-bold text-xs rounded-lg">${qIdx + 1}</span>
-            <h3 class="text-base font-bold text-slate-900 leading-snug">${qData.q}</h3>
-          </div>
-          <div class="grid grid-cols-1 sm:grid-cols-2 gap-2.5 pt-2 pl-2">
-            ${qData.options.map((opt, optIdx) => `
-              <label class="flex items-center p-3 border border-slate-200 bg-white rounded-lg cursor-pointer hover:border-brand-500 hover:bg-brand-50/30 transition">
-                <input type="radio" name="exam-q-${qData.id}" value="${optIdx}" onchange="selectExamOption(${qData.id}, ${optIdx})" class="w-4 h-4 text-brand-600 border-slate-300 focus:ring-brand-500">
-                <span class="ml-2.5 text-xs font-medium text-slate-800">${opt}</span>
+
+    function renderExamQuestions() {
+      const list = document.getElementById('exam-questions-list');
+      list.innerHTML = examQuestionsData.map((item, qIdx) => `
+        <div class="bg-slate-50 rounded-xl p-5 border border-slate-200">
+          <p class="text-sm font-bold text-slate-900 mb-3">${item.q}</p>
+          <div class="space-y-2">
+            ${item.options.map((opt, optIdx) => `
+              <label class="flex items-center space-x-3 p-2.5 rounded-lg border border-white bg-white hover:border-brand-300 cursor-pointer text-xs text-slate-700 transition">
+                <input type="radio" name="question_${qIdx}" value="${optIdx}" class="text-brand-600 focus:ring-brand-500">
+                <span>${['A', 'B', 'C', 'D'][optIdx]}. ${opt}</span>
               </label>
             `).join('')}
           </div>
         </div>
       `).join('');
-    }
-
-    function selectExamOption(qId, optionIdx) {
-      examUserAnswers[qId] = optionIdx;
     }
 
     async function submitExamAll() {
@@ -1036,241 +984,220 @@
       const name = document.getElementById('exam-name').value.trim();
 
       if (!cls || !seat || !name) {
-        alert("請填寫受測學員的「班級」、「座號」與「姓名」！");
-        window.scrollTo({ top: 0, behavior: 'smooth' });
+        alert("請完整填寫受測學員之班級、座號與姓名！");
         return;
       }
 
-      let unansweredCount = 0;
-      examQuestions.forEach(q => {
-        if (examUserAnswers[q.id] === undefined) {
-          unansweredCount++;
-        }
-      });
-
-      if (unansweredCount > 0) {
-        if (!confirm(`您還有 ${unansweredCount} 題尚未作答，確定要直接提交嗎？`)) {
-          return;
-        }
-      }
-
-      currentUser = { role: 'student', className: cls, seatNo: seat, name: name };
-      localStorage.setItem('social_eng_current_user', JSON.stringify(currentUser));
-      renderUserSessionBadge();
-
       let score = 0;
-      let incorrectCount = 0;
+      let wrongCount = 0;
 
-      examQuestions.forEach(q => {
-        if (examUserAnswers[q.id] === q.correct) {
+      examQuestionsData.forEach((item, i) => {
+        const selected = document.querySelector(`input[name="question_${i}"]:checked`);
+        if (selected && parseInt(selected.value) === item.ans) {
           score += 5;
         } else {
-          incorrectCount++;
+          wrongCount++;
         }
       });
 
-      let levelTitle = "資安新手";
-      if (score >= 90) levelTitle = "專家級資安防禦者";
-      else if (score >= 70) levelTitle = "合格資安衛士";
-      else if (score >= 50) levelTitle = "高風險宣導對象";
-      else levelTitle = "極高風險資安漏洞";
+      currentUser = { class: cls, seat: seat, name: name };
+      localStorage.setItem('social_eng_current_user', JSON.stringify(currentUser));
+      renderUserSession();
 
-      const record = {
-        timestamp: new Date().toLocaleString('zh-TW'),
-        className: currentUser.className,
-        seatNo: currentUser.seatNo,
-        studentName: currentUser.name,
-        score: score,
-        totalQuestions: 20,
-        levelTitle: levelTitle,
-        incorrectCount: incorrectCount
-      };
-
-      localScoresList.unshift(record);
-      localStorage.setItem('social_eng_scores', JSON.stringify(localScoresList));
-
-      if (gasApiUrl) {
-        try {
-          fetch(gasApiUrl, {
-            method: 'POST',
-            mode: 'no-cors',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify(record)
-          });
-        } catch (e) {
-          console.error("GAS Post Error:", e);
-        }
+      let title = "資安防禦大師";
+      let rating = "優秀 (Low Risk)";
+      if (score < 60) {
+        title = "資安高風險同仁";
+        rating = "危險 (High Risk)";
+      } else if (score < 80) {
+        title = "資安覺察學徒";
+        rating = "中度 (Medium Risk)";
       }
 
+      const timestamp = new Date().toLocaleString('zh-TW', { hour12: false });
+      const record = {
+        timestamp: timestamp,
+        class: cls,
+        seat: seat,
+        name: name,
+        score: score,
+        title: title,
+        wrongCount: wrongCount,
+        rating: rating
+      };
+
+      localScores.unshift(record);
+      localStorage.setItem('social_eng_scores', JSON.stringify(localScores));
+
+      // POST to GAS
+      try {
+        fetch(gasApiUrl, {
+          method: 'POST',
+          mode: 'no-cors',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(record)
+        });
+      } catch (e) {
+        console.error("GAS Post Error:", e);
+      }
+
+      // Hide Full Card, Show Result Certificate
       document.getElementById('exam-full-card').classList.add('hidden');
       const resultCard = document.getElementById('exam-result-card');
       resultCard.classList.remove('hidden');
-
       resultCard.innerHTML = `
-        <div class="w-16 h-16 rounded-full ${score >= 70 ? 'bg-emerald-100 text-emerald-600' : 'bg-red-100 text-red-600'} flex items-center justify-center mx-auto mb-4 text-3xl">
-          <i class="fa-solid ${score >= 70 ? 'fa-award' : 'fa-triangle-exclamation'}"></i>
+        <div class="w-16 h-16 bg-emerald-100 text-emerald-600 rounded-full flex items-center justify-center mx-auto mb-4 text-3xl">
+          <i class="fa-solid fa-award"></i>
         </div>
-        <h2 class="text-2xl font-bold text-slate-900 mb-1">測驗完成！總得分：${score} / 100</h2>
-        <p class="text-xs text-slate-500 mb-6">受測學員：${currentUser.className} | ${currentUser.seatNo}號 ${currentUser.name}</p>
+        <h3 class="text-2xl font-bold text-slate-900 mb-1">演練與測驗完成！</h3>
+        <p class="text-xs text-slate-500 mb-6">成績已自動同步至雲端成績資料庫與試算表。</p>
 
-        <div class="bg-slate-50 border border-slate-200 rounded-xl p-6 mb-6">
-          <span class="text-xs font-semibold text-slate-500 uppercase tracking-wider">評定資安等級頭銜</span>
-          <div class="text-xl font-bold ${score >= 70 ? 'text-emerald-600' : 'text-red-600'} mt-1">${levelTitle}</div>
-          <p class="text-xs text-slate-600 mt-2">答對 ${score/5} 題，答錯 ${incorrectCount} 題。成績已順利上傳至 Google 試算表。</p>
+        <div class="bg-slate-50 border border-slate-200 rounded-xl p-6 text-left space-y-3 mb-6 max-w-md mx-auto">
+          <div class="flex justify-between border-b border-slate-200 pb-2 text-xs">
+            <span class="text-slate-500">受測學員：</span>
+            <span class="font-bold text-slate-800">${cls} - ${seat}號 ${name}</span>
+          </div>
+          <div class="flex justify-between border-b border-slate-200 pb-2 text-xs">
+            <span class="text-slate-500">測驗總得分：</span>
+            <span class="font-extrabold text-2xl ${score >= 70 ? 'text-emerald-600' : 'text-red-600'}">${score} <span class="text-xs font-normal text-slate-400">/ 100</span></span>
+          </div>
+          <div class="flex justify-between border-b border-slate-200 pb-2 text-xs">
+            <span class="text-slate-500">資安等級頭銜：</span>
+            <span class="font-bold text-brand-600">${title}</span>
+          </div>
+          <div class="flex justify-between text-xs">
+            <span class="text-slate-500">風險評級：</span>
+            <span class="font-bold ${score >= 70 ? 'text-emerald-600' : 'text-red-600'}">${rating}</span>
+          </div>
         </div>
 
-        <button onclick="location.reload()" class="px-6 py-2.5 bg-brand-600 hover:bg-brand-700 text-white font-semibold text-xs rounded-lg shadow-sm transition">
-          返回平台首頁
-        </button>
+        <button onclick="location.reload()" class="px-6 py-2.5 bg-brand-600 text-white font-medium text-xs rounded-lg hover:bg-brand-700 transition">重新測試或返回首頁</button>
       `;
+
+      updateTeacherDashboard();
     }
 
     // ==========================================
-    // 教師管理與成績統計 (含單筆刪除與清空全部)
+    // TAB 5: TEACHER MANAGEMENT & DASHBOARD
     // ==========================================
-    function renderTeacherDashboard() {
-      const allRecords = localScoresList;
-      document.getElementById('kpi-total-takers').innerText = allRecords.length;
 
-      if (allRecords.length > 0) {
-        const avg = Math.round(allRecords.reduce((acc, r) => acc + r.score, 0) / allRecords.length);
-        const passCount = allRecords.filter(r => r.score >= 70).length;
-        const highRiskCount = allRecords.filter(r => r.score < 60).length;
+    function loginTeacher() {
+      const pwd = document.getElementById('teacher-password-input').value;
+      if (pwd === "admin123" || pwd === "teacher") {
+        document.getElementById('teacher-auth-locked').classList.add('hidden');
+        document.getElementById('teacher-dashboard-unlocked').classList.remove('hidden');
+        updateTeacherDashboard();
+      } else {
+        alert("密碼錯誤！預設測試密碼為：admin123");
+      }
+    }
+
+    function updateTeacherDashboard() {
+      const tbody = document.getElementById('teacher-scores-tbody');
+      tbody.innerHTML = '';
+
+      document.getElementById('teacher-record-count').innerText = `共 ${localScores.length} 筆紀錄`;
+      document.getElementById('kpi-total-takers').innerText = localScores.length;
+
+      if (localScores.length > 0) {
+        const avg = Math.round(localScores.reduce((a, b) => a + b.score, 0) / localScores.length);
+        const passCount = localScores.filter(s => s.score >= 70).length;
+        const passRate = Math.round((passCount / localScores.length) * 100);
+        const highRiskRate = Math.round((localScores.filter(s => s.score < 60).length / localScores.length) * 100);
 
         document.getElementById('kpi-avg-score').innerText = `${avg} / 100`;
-        document.getElementById('kpi-pass-rate').innerText = `${Math.round((passCount / allRecords.length) * 100)}%`;
-        document.getElementById('kpi-high-risk').innerText = `${Math.round((highRiskCount / allRecords.length) * 100)}%`;
-      } else {
-        document.getElementById('kpi-avg-score').innerText = `0 / 100`;
-        document.getElementById('kpi-pass-rate').innerText = `0%`;
-        document.getElementById('kpi-high-risk').innerText = `0%`;
+        document.getElementById('kpi-pass-rate').innerText = `${passRate}%`;
+        document.getElementById('kpi-high-risk').innerText = `${highRiskRate}%`;
       }
 
-      renderTeacherTable(allRecords);
-    }
-
-    function renderTeacherTable(records) {
-      const tbody = document.getElementById('teacher-scores-tbody');
-      document.getElementById('teacher-record-count').innerText = `共 ${records.length} 筆紀錄`;
-
-      if (records.length === 0) {
-        tbody.innerHTML = `<tr><td colspan="9" class="text-center py-8 text-slate-400">尚無測驗紀錄數據</td></tr>`;
-        return;
-      }
-
-      tbody.innerHTML = records.map((r, idx) => `
-        <tr class="hover:bg-slate-50">
-          <td class="px-4 py-3 code-font text-slate-500">${r.timestamp}</td>
-          <td class="px-4 py-3 font-semibold">${r.className}</td>
-          <td class="px-4 py-3">${r.seatNo}</td>
-          <td class="px-4 py-3 font-medium text-slate-900">${r.studentName}</td>
-          <td class="px-4 py-3 font-bold ${r.score >= 70 ? 'text-emerald-600' : 'text-red-600'}">${r.score}</td>
-          <td class="px-4 py-3">${r.levelTitle}</td>
-          <td class="px-4 py-3 text-red-500 font-medium">${r.incorrectCount}</td>
-          <td class="px-4 py-3">
-            <span class="px-2 py-0.5 text-[10px] font-bold rounded ${r.score >= 70 ? 'bg-emerald-100 text-emerald-800' : 'bg-red-100 text-red-800'}">
-              ${r.score >= 70 ? '合格 Pass' : '高風險 Risk'}
-            </span>
-          </td>
+      localScores.forEach((row, i) => {
+        const tr = document.createElement('tr');
+        tr.className = "hover:bg-slate-50 transition";
+        tr.innerHTML = `
+          <td class="px-4 py-3 text-slate-500 code-font">${row.timestamp}</td>
+          <td class="px-4 py-3 font-medium text-slate-800">${row.class}</td>
+          <td class="px-4 py-3 text-slate-600">${row.seat}</td>
+          <td class="px-4 py-3 font-bold text-slate-900">${row.name}</td>
+          <td class="px-4 py-3 font-extrabold ${row.score >= 70 ? 'text-emerald-600' : 'text-red-600'}">${row.score}</td>
+          <td class="px-4 py-3 text-brand-600 font-medium">${row.title}</td>
+          <td class="px-4 py-3 text-slate-500">${row.wrongCount} 題</td>
+          <td class="px-4 py-3"><span class="px-2 py-0.5 text-[10px] rounded-full ${row.score >= 70 ? 'bg-emerald-100 text-emerald-800' : 'bg-red-100 text-red-800'} font-semibold">${row.rating}</span></td>
           <td class="px-4 py-3 text-center">
-            <button onclick="deleteSingleScore(${idx})" class="text-red-600 hover:text-red-800 text-xs px-2 py-1 rounded bg-red-50 hover:bg-red-100 transition">
-              <i class="fa-solid fa-trash-can mr-1"></i>刪除
-            </button>
+            <button onclick="deleteSingleScore(${i})" class="text-red-500 hover:text-red-700 p-1"><i class="fa-solid fa-trash"></i></button>
           </td>
-        </tr>
-      `).join('');
+        `;
+        tbody.appendChild(tr);
+      });
     }
 
     function deleteSingleScore(idx) {
-      if (confirm(`確定要刪除學員「${localScoresList[idx].studentName}」的測驗紀錄嗎？`)) {
-        localScoresList.splice(idx, 1);
-        localStorage.setItem('social_eng_scores', JSON.stringify(localScoresList));
-        renderTeacherDashboard();
+      if (confirm("確定要刪除此筆學員測驗紀錄？")) {
+        localScores.splice(idx, 1);
+        localStorage.setItem('social_eng_scores', JSON.stringify(localScores));
+        updateTeacherDashboard();
       }
     }
 
     function clearAllScores() {
-      if (confirm("⚠️ 警告：這將會刪除本地端儲存的所有學生成績紀錄！確定要清空嗎？")) {
-        localScoresList = [];
+      if (confirm("警告：此操作將清空 LocalStorage 中的全部成績紀錄，確定執行？")) {
+        localScores = [];
         localStorage.removeItem('social_eng_scores');
-        renderTeacherDashboard();
-        alert("已清空所有本地成績紀錄。");
+        updateTeacherDashboard();
       }
-    }
-
-    function filterTeacherTable() {
-      const query = document.getElementById('teacher-search-input').value.toLowerCase();
-      const filtered = localScoresList.filter(r =>
-        r.studentName.toLowerCase().includes(query) ||
-        r.className.toLowerCase().includes(query) ||
-        String(r.seatNo).includes(query)
-      );
-      renderTeacherTable(filtered);
     }
 
     async function syncGasScores() {
       try {
-        const res = await fetch(`${gasApiUrl}?action=getScores`);
-        const result = await res.json();
-        if (result.status === 'success' && Array.isArray(result.data)) {
-          localScoresList = result.data;
-          localStorage.setItem('social_eng_scores', JSON.stringify(localScoresList));
-          renderTeacherDashboard();
-          alert(`✅ 雲端同步成功！已載入 ${result.data.length} 筆成績資料。`);
+        const res = await fetch(gasApiUrl);
+        const data = await res.json();
+        if (Array.isArray(data)) {
+          localScores = data;
+          localStorage.setItem('social_eng_scores', JSON.stringify(localScores));
+          updateTeacherDashboard();
+          alert("已成功從 Google 雲端試算表同步最新的成績資料！");
         }
       } catch (e) {
-        alert("❌ 雲端同步失敗，請確認 GAS API 部署與網路連線。");
+        alert("從 GAS 同步資料失敗，請檢查 API 部署網址或網路狀態。");
       }
     }
 
-    async function fetchTeacherAnswerKeys() {
-      const card = document.getElementById('teacher-answers-card');
+    function fetchTeacherAnswerKeys() {
       const container = document.getElementById('teacher-answers-container');
-
+      const card = document.getElementById('teacher-answers-card');
       card.classList.remove('hidden');
 
-      if (!teacherAnswerKeys) {
-        try {
-          const res = await fetch(`${gasApiUrl}?action=getTeacherKeys`);
-          const result = await res.json();
-          if (result.status === 'success') {
-            teacherAnswerKeys = result.keys;
-          }
-        } catch (e) {
-          console.error(e);
-        }
-      }
+      container.innerHTML = examQuestionsData.map((q, i) => `
+        <div class="bg-slate-50 p-3 rounded-lg border border-slate-200 text-xs">
+          <div class="font-bold text-slate-800 mb-1">${q.q}</div>
+          <div class="text-emerald-700 font-semibold"><i class="fa-solid fa-check mr-1"></i>標準答案：${['A','B','C','D'][q.ans]}. ${q.options[q.ans]}</div>
+        </div>
+      `).join('');
+    }
 
-      container.innerHTML = examQuestions.map(q => {
-        const keyInfo = teacherAnswerKeys ? teacherAnswerKeys[q.id] : null;
-        const optText = q.options[q.correct];
-        return `
-          <div class="bg-slate-50 p-3.5 rounded-lg border border-slate-200 text-xs">
-            <div class="font-bold text-slate-900 mb-1">${q.id}. ${q.q}</div>
-            <div class="text-emerald-700 font-semibold mb-1"><i class="fa-solid fa-check-circle mr-1"></i>正確解答：${optText}</div>
-            <div class="text-slate-600 leading-relaxed"><span class="font-semibold">觀念解析：</span>${keyInfo ? keyInfo.explanation : '請參考 20 大攻擊向量知識庫詳細說明。'}</div>
-          </div>
-        `;
-      }).join('');
+    function filterTeacherTable() {
+      const q = document.getElementById('teacher-search-input').value.toLowerCase();
+      const rows = document.querySelectorAll('#teacher-scores-tbody tr');
+      rows.forEach(row => {
+        const text = row.innerText.toLowerCase();
+        row.style.display = text.includes(q) ? '' : 'none';
+      });
     }
 
     function exportScoresCSV() {
-      if (localScoresList.length === 0) {
-        alert("尚無成績資料可供匯出！");
+      if (localScores.length === 0) {
+        alert("目前沒有成績資料可供匯出！");
         return;
       }
-
       let csvContent = "data:text/csv;charset=utf-8,\uFEFF";
-      csvContent += "時間戳記,班級,座號,姓名,得分,總題數,資安等級頭銜,答錯題數\n";
-
-      localScoresList.forEach(r => {
-        csvContent += `"${r.timestamp}","${r.className}","${r.seatNo}","${r.studentName}",${r.score},${r.totalQuestions},"${r.levelTitle}",${r.incorrectCount}\n`;
+      csvContent += "時間戳記,班級,座號,姓名,得分,資安頭銜,答錯題數,評級\n";
+      localScores.forEach(r => {
+        csvContent += `"${r.timestamp}","${r.class}","${r.seat}","${r.name}",${r.score},"${r.title}",${r.wrongCount},"${r.rating}"\n`;
       });
 
       const encodedUri = encodeURI(csvContent);
       const link = document.createElement("a");
       link.setAttribute("href", encodedUri);
-      link.setAttribute("download", `社交工程測驗成績單_${new Date().toISOString().substring(0, 10)}.csv`);
+      link.setAttribute("download", `Social_Engineering_Scores_${new Date().toISOString().slice(0,10)}.csv`);
       document.body.appendChild(link);
       link.click();
       document.body.removeChild(link);
