@@ -75,16 +75,9 @@
         </div>
       </div>
 
-      <!-- Header Control Buttons -->
-      <div class="flex items-center space-x-3">
-        <button onclick="openGasModal()" class="px-3 py-1.5 text-xs font-medium text-slate-600 bg-slate-100 hover:bg-slate-200 rounded-lg border border-slate-300 transition flex items-center space-x-1.5">
-          <i class="fa-solid fa-gear text-slate-500"></i>
-          <span>設定 GAS API URL</span>
-        </button>
-
-        <div id="user-session-badge" class="flex items-center space-x-2">
-          <!-- Dynamic User Status -->
-        </div>
+      <!-- Header User Session Badge -->
+      <div id="user-session-badge" class="flex items-center space-x-2">
+        <!-- Dynamic User Status -->
       </div>
     </div>
   </header>
@@ -399,19 +392,6 @@
 
   </main>
 
-  <!-- GAS Config Modal -->
-  <div id="gas-modal" class="fixed inset-0 bg-slate-900/40 backdrop-blur-xs flex items-center justify-center p-4 z-50 hidden">
-    <div class="bg-white rounded-xl max-w-md w-full p-6 shadow-xl border border-slate-200">
-      <h3 class="text-lg font-bold text-slate-900 mb-2">設定 Google Apps Script (GAS) Web App API</h3>
-      <p class="text-xs text-slate-600 mb-4">請將您部署完成的 GAS Web App URL 貼於下方，用以儲存學生成績與雲端獲取官方解答。</p>
-      <input type="text" id="gas-url-input" placeholder="https://script.google.com/macros/s/.../exec" class="w-full text-xs code-font border border-slate-300 rounded-lg px-3 py-2.5 mb-4 focus:ring-2 focus:ring-brand-500 focus:outline-none">
-      <div class="flex justify-end space-x-3">
-        <button onclick="closeGasModal()" class="px-4 py-2 text-xs text-slate-600 hover:bg-slate-100 rounded-lg">取消</button>
-        <button onclick="saveGasUrl()" class="px-4 py-2 text-xs bg-brand-600 hover:bg-brand-700 text-white rounded-lg font-semibold">儲存設定</button>
-      </div>
-    </div>
-  </div>
-
   <footer class="bg-white border-t border-slate-200 py-6 mt-12 text-center text-xs text-slate-500">
     <div class="max-w-7xl mx-auto px-4">
       <p>© 2026 企業與學校社交工程教育與實作演練平台. All Rights Reserved.</p>
@@ -424,8 +404,8 @@
     // DATA & GLOBAL STATE
     // ==========================================
 
-    // GAS API Endpoint URL (已更新為您最新指定的 GAS 網址)
-    let gasApiUrl = localStorage.getItem('social_eng_gas_url') || 'https://script.google.com/macros/s/AKfycbyujFzbpcDWtircXi4mCh3HO4osWDFnGJuwIeVHfBt5CKfCAIucZUmT70fHKLf47pKYbg/exec';
+    // 固定硬編碼專屬 GAS API 網址
+    const gasApiUrl = 'https://script.google.com/macros/s/AKfycbyujFzbpcDWtircXi4mCh3HO4osWDFnGJuwIeVHfBt5CKfCAIucZUmT70fHKLf47pKYbg/exec';
 
     let currentUser = JSON.parse(localStorage.getItem('social_eng_current_user')) || null;
 
@@ -682,7 +662,7 @@
       { id: 16, q: "從辦公室廢棄垃圾桶中翻找未經過碎紙機銷毀的客戶名單與紙本文件，此行為稱為？", options: ["A. 垃圾搜尋 (Dumpster Diving)", "B. 惡意軟體", "C. 魚叉釣魚", "D. 密碼暴力破解"], correct: 0 },
       { id: 17, q: "攻擊者預先編造角色（如外聘審計員）與虛構劇本來獲取信任的手法稱為？", options: ["A. 藉口劇本欺詐 (Pretexting)", "B. Port Scanning", "C. SQLi", "D. Fuzzing"], correct: 0 },
       { id: 18, q: "攻擊防禦較弱的外包商或印表機維護廠商，藉其信任管道滲透目標企業內網稱為？", options: ["A. 供應鏈攻擊 (Supply Chain Attack)", "B. 惡意雙胞胎", "C. 肩窺攻擊", "D. 簡訊釣魚"], correct: 0 },
-      { id: 19, q: "買下正常新聞網頁的廣告欄位，並投放帶有惡意跳轉腳本的橫幅廣告，此手法稱為？", options: ["A. 釣魚式惡意廣告 (Malvertising)", "B. SEO 優化", "C. 橫幅行銷", "D. 品牌聯播"], correct: 0 },
+      { id: 19, q: "買下正規新聞網頁的廣告欄位，並投放帶有惡意跳轉腳本的橫幅廣告，此手法稱為？", options: ["A. 釣魚式惡意廣告 (Malvertising)", "B. SEO 優化", "C. 橫幅行銷", "D. 品牌聯播"], correct: 0 },
       { id: 20, q: "先發動攻擊讓目標系統癱瘓，再假冒總部 IT 救星主動協助，讓受害者主動獻出帳密的手法稱為？", options: ["A. 反向社交工程 (Reverse Social Eng)", "B. 門禁尾隨", "C. 垃圾搜尋", "D. 簡訊釣魚"], correct: 0 }
     ];
 
@@ -761,27 +741,24 @@
         return;
       }
 
-      if (gasApiUrl) {
-        try {
-          const res = await fetch(`${gasApiUrl}?action=verifyTeacherPassword&password=${encodeURIComponent(pwdInput)}`);
-          const result = await res.json();
-          if (result.status === "success") {
-            currentUser = { role: 'teacher', name: '資安教師' };
-            localStorage.setItem('social_eng_current_user', JSON.stringify(currentUser));
-            renderUserSessionBadge();
-            checkTeacherAuthState();
-            return;
-          } else {
-            alert("❌ 密碼錯誤！雲端驗證失敗。");
-            return;
-          }
-        } catch (e) {
-          console.error(e);
-          alert("⚠️ GAS 網路請求失敗，請檢查 URL 設定或網路連線。");
+      try {
+        const res = await fetch(`${gasApiUrl}?action=verifyTeacherPassword&password=${encodeURIComponent(pwdInput)}`);
+        const result = await res.json();
+        if (result.status === "success") {
+          currentUser = { role: 'teacher', name: '資安教師' };
+          localStorage.setItem('social_eng_current_user', JSON.stringify(currentUser));
+          renderUserSessionBadge();
+          checkTeacherAuthState();
+          return;
+        } else {
+          alert("❌ 密碼錯誤！雲端驗證失敗。");
           return;
         }
+      } catch (e) {
+        console.error(e);
+        alert("⚠️ GAS 網路請求失敗，請檢查網路連線。");
+        return;
       }
-      alert("⚠️ 請設定 GAS API URL 以完成雲端密碼驗證！");
     }
 
     function checkTeacherAuthState() {
@@ -1232,11 +1209,6 @@
     }
 
     async function syncGasScores() {
-      if (!gasApiUrl) {
-        alert("⚠️ 請先設定 GAS API URL 以便同步雲端數據！");
-        return;
-      }
-
       try {
         const res = await fetch(`${gasApiUrl}?action=getScores`);
         const result = await res.json();
@@ -1255,13 +1227,9 @@
       const card = document.getElementById('teacher-answers-card');
       const container = document.getElementById('teacher-answers-container');
 
-      if (!gasApiUrl) {
-        alert("⚠️ 尚未設定 GAS API URL，將呈現預載之官方標準解答。");
-      }
-
       card.classList.remove('hidden');
 
-      if (gasApiUrl && !teacherAnswerKeys) {
+      if (!teacherAnswerKeys) {
         try {
           const res = await fetch(`${gasApiUrl}?action=getTeacherKeys`);
           const result = await res.json();
@@ -1306,23 +1274,6 @@
       document.body.appendChild(link);
       link.click();
       document.body.removeChild(link);
-    }
-
-    function openGasModal() {
-      document.getElementById('gas-url-input').value = gasApiUrl;
-      document.getElementById('gas-modal').classList.remove('hidden');
-    }
-
-    function closeGasModal() {
-      document.getElementById('gas-modal').classList.add('hidden');
-    }
-
-    function saveGasUrl() {
-      const url = document.getElementById('gas-url-input').value.trim();
-      gasApiUrl = url;
-      localStorage.setItem('social_eng_gas_url', url);
-      closeGasModal();
-      alert("GAS API URL 已順利儲存！");
     }
   </script>
 </body>
