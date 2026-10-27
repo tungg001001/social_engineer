@@ -1,0 +1,837 @@
+<!DOCTYPE html>
+<html lang="zh-TW" class="dark">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>社交工程教育與實作演練平台 | Enterprise Social Engineering Education Platform</title>
+    <!-- Tailwind CSS CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- FontAwesome Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Fira+Code:wght@400;500;600&family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+
+    <script>
+        tailwind.config = {
+            darkMode: 'class',
+            theme: {
+                extend: {
+                    colors: {
+                        cyber: {
+                            bg: '#080c14',
+                            card: '#0f172a',
+                            cardHover: '#1e293b',
+                            border: '#1e293b',
+                            cyan: '#00f2fe',
+                            blue: '#3b82f6',
+                            red: '#ff4b5c',
+                            amber: '#ffb800',
+                            green: '#00e676',
+                            purple: '#a855f7'
+                        }
+                    },
+                    fontFamily: {
+                        sans: ['Inter', 'Microsoft JhengHei', 'sans-serif'],
+                        mono: ['Fira Code', 'monospace']
+                    }
+                }
+            }
+        }
+    </script>
+
+    <style>
+        body {
+            background-color: #080c14;
+            color: #cbd5e1;
+        }
+        ::-webkit-scrollbar {
+            width: 8px;
+            height: 8px;
+        }
+        ::-webkit-scrollbar-track {
+            background: #080c14;
+        }
+        ::-webkit-scrollbar-thumb {
+            background: #1e293b;
+            border-radius: 4px;
+        }
+        ::-webkit-scrollbar-thumb:hover {
+            background: #334155;
+        }
+        .glow-cyan {
+            box-shadow: 0 0 20px rgba(0, 242, 254, 0.2);
+        }
+        .glow-red {
+            box-shadow: 0 0 20px rgba(255, 75, 92, 0.25);
+        }
+        .glow-green {
+            box-shadow: 0 0 20px rgba(0, 230, 118, 0.2);
+        }
+        .tech-border {
+            border: 1px solid rgba(51, 65, 85, 0.8);
+        }
+        .scanline {
+            background: linear-gradient(to bottom, rgba(255,255,255,0), rgba(255,255,255,0) 50%, rgba(0, 0, 0, 0.3) 50%, rgba(0, 0, 0, 0.3));
+            background-size: 100% 4px;
+        }
+            <!-- Navigation Links -->
+            <div class="hidden md:flex space-x-1 font-medium text-sm">
+                <button onclick="switchTab('learn')" id="nav-learn" class="px-3 py-2 rounded-lg text-cyan-400 bg-cyan-950/60 border border-cyan-500/30 flex items-center space-x-2 transition">
+                    <i class="fas fa-book-open"></i><span>知識庫 (8大向量)</span>
+                </button>
+                <button onclick="switchTab('phishing-eval')" id="nav-phishing-eval" class="px-3 py-2 rounded-lg text-slate-400 hover:text-slate-200 hover:bg-slate-800/60 flex items-center space-x-2 transition">
+                    <i class="fas fa-mail-bulk"></i><span>郵件辨識演練</span>
+                </button>
+                <button onclick="switchTab('sandbox')" id="nav-sandbox" class="px-3 py-2 rounded-lg text-slate-400 hover:text-slate-200 hover:bg-slate-800/60 flex items-center space-x-2 transition">
+                    <i class="fas fa-flask text-amber-400"></i><span>釣魚登入沙盒 (3組)</span>
+                </button>
+                <button onclick="switchTab('quiz')" id="nav-quiz" class="px-3 py-2 rounded-lg text-slate-400 hover:text-slate-200 hover:bg-slate-800/60 flex items-center space-x-2 transition">
+                    <i class="fas fa-file-signature"></i><span>綜合測驗 (20題)</span>
+                </button>
+                <button onclick="switchTab('teacher')" id="nav-teacher" class="px-3 py-2 rounded-lg text-slate-400 hover:text-slate-200 hover:bg-slate-800/60 flex items-center space-x-2 transition">
+                    <i class="fas fa-chart-line text-purple-400"></i><span>教師後台</span>
+                </button>
+            </div>
+        <!-- ==================== TAB 3: SANDBOX ==================== -->
+        <section id="tab-sandbox" class="tab-content hidden space-y-6">
+            <div class="bg-slate-900/80 border border-amber-500/30 rounded-xl p-6 backdrop-blur">
+                <div class="flex flex-col md:flex-row md:items-center justify-between gap-4">
+                    <div>
+                        <div class="flex items-center space-x-2">
+                            <span class="px-2.5 py-1 text-xs font-bold rounded bg-amber-500/20 text-amber-400 border border-amber-500/30">安全受控沙盒</span>
+                            <h2 class="text-xl font-bold text-slate-100">擬真釣魚登入頁面實作沙盒 (Interactive Phishing Sandboxes)</h2>
+                        </div>
+                        <p class="text-sm text-slate-400 mt-1">選擇下方不同平台的釣魚入口進行測試，輸入任意測試帳密並點擊登入，觀察防護終端如何即時側錄並解析攻擊者手段與封包。</p>
+                    </div>
+                    <!-- Portal Selector Buttons -->
+                    <div class="flex flex-wrap gap-2">
+                        <button onclick="selectSandboxPortal('m365')" id="portal-btn-m365" class="px-4 py-2 text-xs font-semibold rounded-lg bg-cyan-600 text-white border border-cyan-400 flex items-center space-x-2 shadow-lg shadow-cyan-900/30 transition">
+                            <i class="fab fa-microsoft"></i><span>Microsoft 365</span>
+                        </button>
+                        <button onclick="selectSandboxPortal('google')" id="portal-btn-google" class="px-4 py-2 text-xs font-semibold rounded-lg bg-slate-800 text-slate-300 border border-slate-700 hover:bg-slate-700 flex items-center space-x-2 transition">
+                            <i class="fab fa-google text-red-400"></i><span>Google Workspace</span>
+                        </button>
+                        <button onclick="selectSandboxPortal('meta')" id="portal-btn-meta" class="px-4 py-2 text-xs font-semibold rounded-lg bg-slate-800 text-slate-300 border border-slate-700 hover:bg-slate-700 flex items-center space-x-2 transition">
+                            <i class="fab fa-facebook text-blue-400"></i><span>Meta / FB 企業粉專</span>
+                        </button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Portal Container Grid -->
+            <div class="grid grid-cols-1 lg:grid-cols-12 gap-6">
+                <!-- Sandbox Canvas (Fake Login View) -->
+                <div class="lg:col-span-7 space-y-4">
+                    <!-- Browser Chrome Shell -->
+                    <div class="bg-slate-900 rounded-xl border border-slate-700 shadow-2xl overflow-hidden">
+                        <!-- URL Bar Mock -->
+                        <div class="bg-slate-950 px-4 py-2.5 border-b border-slate-800 flex items-center space-x-3">
+                            <div class="flex space-x-1.5">
+                                <div class="w-3 h-3 rounded-full bg-red-500/80"></div>
+                                <div class="w-3 h-3 rounded-full bg-yellow-500/80"></div>
+                                <div class="w-3 h-3 rounded-full bg-green-500/80"></div>
+                            </div>
+                            <div class="flex-1 bg-slate-900 px-3 py-1 rounded text-xs text-red-400 flex items-center justify-between border border-red-500/30 font-mono">
+                                <div class="flex items-center space-x-2 truncate">
+                                    <i class="fas fa-exclamation-triangle text-red-400"></i>
+                                    <span id="sandbox-fake-url" class="truncate">https://login.microsoftonline.account-verify-auth.com/oauth2/login</span>
+                                </div>
+                                <span class="text-[10px] text-red-500 font-bold bg-red-950/80 px-1.5 py-0.5 rounded border border-red-800">可疑網域</span>
+                            </div>
+                        </div>
+
+                        <!-- Sandbox Viewport Screen -->
+                        <div id="sandbox-viewport" class="p-6 md:p-10 min-h-[460px] flex items-center justify-center bg-slate-950 transition-all">
+                            
+                            <!-- PORTAL 1: MICROSOFT 365 -->
+                            <div id="portal-m365" class="w-full max-w-md bg-white text-slate-800 rounded-lg shadow-2xl p-8 border border-slate-200">
+                                <div class="flex items-center space-x-2 mb-6">
+                                    <div class="grid grid-cols-2 gap-0.5 w-5 h-5">
+                                        <div class="bg-[#f25022]"></div><div class="bg-[#7fba00]"></div>
+                                        <div class="bg-[#00a4ef]"></div><div class="bg-[#ffb900]"></div>
+                                    </div>
+                                    <span class="text-xl font-semibold text-slate-700 tracking-tight">Microsoft</span>
+                                </div>
+                                <h3 class="text-2xl font-bold text-slate-900 mb-1">登入</h3>
+                                <p class="text-xs text-slate-500 mb-6">繼續使用 Microsoft 365 企業雲端服務</p>
+                                <form id="form-m365" onsubmit="triggerInterception(event, 'Microsoft 365')">
+                                    <div class="space-y-4">
+                                        <div>
+                                            <input type="text" id="m365-email" required placeholder="電子郵件、電話或 Skype" value="user@company.com.tw" class="w-full px-3 py-2 text-sm border-b-2 border-slate-300 focus:border-blue-600 outline-none transition bg-transparent text-slate-800">
+                                        </div>
+                                        <div>
+                                            <input type="password" id="m365-pass" required placeholder="密碼" value="Password123!" class="w-full px-3 py-2 text-sm border-b-2 border-slate-300 focus:border-blue-600 outline-none transition bg-transparent text-slate-800">
+                                        </div>
+                                        <div class="flex items-center justify-between text-xs text-slate-600 pt-2">
+                                            <label class="flex items-center space-x-2 cursor-pointer">
+                                                <input type="checkbox" checked class="rounded border-slate-300 text-blue-600">
+                                                <span>保持登入狀態</span>
+                                            </label>
+                                            <a href="javascript:void(0)" class="text-blue-600 hover:underline">忘記密碼？</a>
+                                        </div>
+                                        <div class="pt-4 flex justify-end space-x-2">
+                                            <button type="submit" class="px-8 py-2 bg-[#0067b8] hover:bg-[#005da6] text-white text-sm font-medium rounded transition shadow">
+                                                登入
+                                            </button>
+                                        </div>
+                                    </div>
+                                </form>
+                            </div>
+
+                            <!-- PORTAL 2: GOOGLE WORKSPACE -->
+                            <div id="portal-google" class="hidden w-full max-w-md bg-white text-slate-800 rounded-2xl shadow-2xl p-8 border border-slate-200">
+                                <div class="text-center mb-6">
+                                    <svg class="w-10 h-10 mx-auto mb-2" viewBox="0 0 24 24">
+                                        <path fill="#4285F4" d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z"/>
+                                        <path fill="#34A853" d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z"/>
+                                        <path fill="#FBBC05" d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.06H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.94l2.85-2.22.81-.63z"/>
+                                        <path fill="#EA4335" d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.06l3.66 2.84c.87-2.6 3.3-4.52 6.16-4.52z"/>
+                                    </svg>
+                                    <h3 class="text-xl font-semibold text-slate-800">登入您的 Google 帳戶</h3>
+                                    <p class="text-xs text-slate-500 mt-1">使用您的企業 Workspace 帳戶</p>
+                                </div>
+                                <form id="form-google" onsubmit="triggerInterception(event, 'Google Workspace')">
+                                    <div class="space-y-4">
+                                        <div>
+                                            <input type="text" id="google-email" required placeholder="電子郵件或電話號碼" value="admin@enterprise-corp.com" class="w-full px-4 py-3 text-sm border border-slate-300 rounded-lg focus:border-blue-600 outline-none transition text-slate-800">
+                                        </div>
+                                        <div>
+                                            <input type="password" id="google-pass" required placeholder="請輸入您的密碼" value="GoogleSecure#2026" class="w-full px-4 py-3 text-sm border border-slate-300 rounded-lg focus:border-blue-600 outline-none transition text-slate-800">
+                                        </div>
+                                        <div class="flex items-center justify-between text-xs pt-1">
+                                            <a href="javascript:void(0)" class="text-blue-600 font-medium hover:underline">忘記電子郵件？</a>
+                                            <button type="submit" class="px-6 py-2.5 bg-blue-600 hover:bg-blue-700 text-white font-medium rounded-lg text-sm transition shadow">
+                                                下一步
+                                            </button>
+                                        </div>
+                                    </div>
+                                </form>
+                            </div>
+
+                            <!-- PORTAL 3: META / FACEBOOK BUSINESS -->
+                            <div id="portal-meta" class="hidden w-full max-w-md bg-white text-slate-800 rounded-xl shadow-2xl border border-slate-200 overflow-hidden">
+                                <div class="bg-gradient-to-r from-blue-700 to-indigo-800 p-4 text-white flex items-center justify-between">
+                                    <div class="flex items-center space-x-2">
+                                        <i class="fab fa-facebook-square text-2xl"></i>
+                                        <span class="font-bold text-sm tracking-wide">Meta Business Suite</span>
+                                    </div>
+                                    <span class="text-[10px] bg-red-500/80 text-white font-bold px-2 py-0.5 rounded-full uppercase tracking-wider">系統緊急警告</span>
+                                </div>
+                                <div class="p-6">
+                                    <div class="bg-red-50 border border-red-200 text-red-700 p-3 rounded-lg text-xs mb-4 flex items-start space-x-2">
+                                        <i class="fas fa-exclamation-circle text-red-500 mt-0.5"></i>
+                                        <div>
+                                            <span class="font-bold">您的粉絲專頁已被檢舉侵權！</span>
+                                            <p class="text-[11px] mt-0.5 text-red-600">請在 24 小時內登入驗證身份，否則管理權限將被永久封鎖。</p>
+                                        </div>
+                                    </div>
+                                    <form id="form-meta" onsubmit="triggerInterception(event, 'Meta Business')">
+                                        <div class="space-y-3">
+                                            <div>
+                                                <label class="block text-xs font-semibold text-slate-600 mb-1">帳號 / 手機號碼 / 電子郵件</label>
+                                                <input type="text" id="meta-email" required value="fanpage_admin@company.com" class="w-full px-3 py-2 text-sm border border-slate-300 rounded focus:border-blue-600 outline-none transition text-slate-800">
+                                            </div>
+                                            <div>
+                                                <label class="block text-xs font-semibold text-slate-600 mb-1">密碼</label>
+                                                <input type="password" id="meta-pass" required value="MetaManagerPass2026" class="w-full px-3 py-2 text-sm border border-slate-300 rounded focus:border-blue-600 outline-none transition text-slate-800">
+                                            </div>
+                                            <button type="submit" class="w-full py-2.5 bg-blue-600 hover:bg-blue-700 text-white font-bold rounded text-sm transition shadow mt-2">
+                                                驗證身分並解除封鎖
+                                            </button>
+                                        </div>
+                                    </form>
+                                </div>
+                            </div>
+
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Live Interception Console & Security Analysis -->
+                <div class="lg:col-span-5 space-y-4">
+                    <!-- Console Header -->
+                    <div class="bg-slate-900 border border-slate-800 rounded-xl p-4 flex items-center justify-between">
+                        <div class="flex items-center space-x-2">
+                            <span class="relative flex h-3 w-3">
+                              <span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-red-400 opacity-75"></span>
+                              <span class="relative inline-flex rounded-full h-3 w-3 bg-red-500"></span>
+                            </span>
+                            <span class="text-sm font-bold text-slate-200">終端側錄與分析面板 (Interceptor)</span>
+                        </div>
+                        <span id="interception-status" class="text-xs text-slate-400 font-mono">狀態: 監聽中...</span>
+                    </div>
+
+                    <!-- Terminal Output Box -->
+                    <div class="bg-black/90 border border-slate-800 rounded-xl p-4 font-mono text-xs leading-relaxed text-emerald-400 shadow-inner h-80 overflow-y-auto space-y-2">
+                        <div class="text-slate-500">// 社交工程沙盒防護系統 啟動中...</div>
+                        <div class="text-slate-500">// 正在開啟 HTTPS 流量攔截代理 (MITM Sandbox Proxy)</div>
+                        <div class="text-cyan-400">[INFO] 監聽目標: <span id="console-target-portal">Microsoft 365 偽造頁面</span></div>
+                        <div id="console-logs" class="space-y-1">
+                            <div class="text-slate-400">[READY] 等待使用者在左側沙盒輸入憑證...</div>
+                        </div>
+                    </div>
+
+                    <!-- Red Warning Card (Shown after submit) -->
+                    <div id="interception-alert-card" class="hidden bg-gradient-to-br from-red-950/80 to-slate-900 border-2 border-red-500/60 rounded-xl p-5 shadow-2xl animate-fade-in space-y-3">
+                        <div class="flex items-center space-x-3 text-red-400 border-b border-red-500/30 pb-3">
+                            <div class="p-2 rounded-lg bg-red-500/20 text-red-400">
+                                <i class="fas fa-shield-virus text-2xl"></i>
+                            </div>
+                            <div>
+                                <h4 class="font-bold text-base text-red-200">警告！帳密已被釣魚網站側錄！</h4>
+                                <p class="text-xs text-red-300/80">這是釣魚演練。若在真實情境，您的帳號將直接遭到入侵。</p>
+                            </div>
+                        </div>
+
+                        <div class="space-y-2 text-xs">
+                            <div class="bg-slate-950/80 p-3 rounded-lg border border-red-900/50 space-y-1 text-slate-300">
+                                <div><span class="text-slate-500">攔截帳號:</span> <span id="captured-user" class="text-yellow-400 font-bold"></span></div>
+                                <div><span class="text-slate-500">攔截密碼:</span> <span id="captured-pass" class="text-red-400 font-bold"></span></div>
+                                <div><span class="text-slate-500">偽造來源:</span> <span id="captured-domain" class="text-cyan-400 font-mono"></span></div>
+                            </div>
+                            <div class="bg-slate-900/90 p-3 rounded-lg border border-slate-800 space-y-1">
+                                <span class="font-bold text-slate-200 block">💡 關鍵資安解析：</span>
+                                <p id="captured-analysis" class="text-slate-400 leading-relaxed"></p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+
+            <!-- 2. EXPANDED 8 ATTACK VECTORS KNOWLEDGE BASE -->
+            <section id="knowledge" class="space-y-6">
+                <div class="flex flex-col md:flex-row md:items-end justify-between gap-4 border-b border-gray-800 pb-4">
+                    <div>
+                        <div class="text-cyber-cyan text-xs font-mono font-bold tracking-wider uppercase mb-1">Advanced Knowledge Taxonomy</div>
+                        <h2 class="text-2xl sm:text-3xl font-extrabold text-white flex items-center gap-3">
+                            <i class="fa-solid fa-book-bookmark text-cyber-cyan"></i> 8 大社交工程攻防深度知識庫
+                        </h2>
+                    </div>
+                    <p class="text-gray-400 text-xs sm:text-sm max-w-md">深入剖析資安威脅技術：點擊頁籤查閱攻擊流程、紅旗指標、真實案例與 SPF/DKIM/DMARC 驗證原理。</p>
+                </div>
+
+                <!-- Tabs Header -->
+                <div class="flex space-x-2 border-b border-gray-800 overflow-x-auto pb-2 scrollbar-none" id="kb-tabs">
+                    <!-- Dynamic Tabs Rendered via JS -->
+                </div>
+
+                <!-- Active Knowledge Base Detail Panel -->
+                <div id="kb-content-display" class="bg-cyber-card border border-gray-800 rounded-3xl p-6 sm:p-8 min-h-[480px]">
+                    <!-- Injected by JS -->
+                </div>
+            </section>
+
+
+            <!-- 3. INTERACTIVE HANDS-ON PHISHING SPOTTER SIMULATOR -->
+            <section id="simulator" class="space-y-6 pt-4">
+                <div class="bg-gradient-to-r from-slate-950 via-gray-900 to-slate-950 p-6 sm:p-8 rounded-3xl border border-gray-800">
+                    <div class="flex flex-col md:flex-row md:items-center justify-between gap-4 mb-6">
+                        <div>
+                            <div class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-mono font-bold bg-amber-500/10 text-amber-400 border border-amber-500/20 mb-2">
+                                <i class="fa-solid fa-bullseye"></i> 點擊熱點互動測試 (Hotspot Spotter)
+                            </div>
+                            <h2 class="text-2xl sm:text-3xl font-extrabold text-white flex items-center gap-3">
+                                <i class="fa-solid fa-envelope-open-text text-cyber-amber"></i> 擬真企業釣魚郵件防禦模擬器
+                            </h2>
+                            <p class="text-gray-400 text-xs sm:text-sm mt-1">
+                                試著檢視下方郵件！點擊郵件內的<span class="text-cyber-amber font-bold">寄件人地址、郵件標頭、急迫語氣標題、附件或連結</span>以解鎖紅旗細節。
+                            </p>
+                        </div>
+
+                        <!-- Scenario Dropdown Switcher -->
+                        <div class="flex items-center gap-3 bg-gray-950 p-2.5 rounded-2xl border border-gray-800">
+                            <label for="scenario-selector" class="text-xs text-gray-400 font-bold whitespace-nowrap pl-2">演練情境：</label>
+                            <select id="scenario-selector" class="bg-gray-900 text-white text-xs sm:text-sm rounded-xl px-3 py-2 border border-gray-700 focus:outline-none focus:border-cyber-cyan cursor-pointer">
+                                <option value="0">情境 1：HR 人力資源處 - 2026 年終績效獎金發放通知</option>
+                                <option value="1">情境 2：IT 資訊處 - Microsoft 365 密碼過期強制重設</option>
+                                <option value="2">情境 3：快捷包裹 - 國際快遞二次配送地址補件</option>
+                                <option value="3">情境 4：CEO 魚叉式詐騙 - 機密併購案緊急海外電匯 (BEC)</option>
+                                <option value="4">情境 5：國税局稽徵所 - 企業營利事業所得稅異常查核通知</option>
+                                <option value="5">情境 6：Google Workspace - 企業雲端硬碟容量已滿警告</option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <!-- Main Simulator Layout (Email Client + Inspection Panel) -->
+                    <div class="grid grid-cols-1 lg:grid-cols-12 gap-6">
+                        
+                        <!-- Left: Mail Client UI (7 Cols) -->
+                        <div class="lg:col-span-7 bg-gray-950 rounded-2xl border border-gray-800 overflow-hidden flex flex-col shadow-2xl">
+                            <!-- Client Bar -->
+                            <div class="bg-gray-900 px-4 py-3 border-b border-gray-800 flex items-center justify-between">
+                                <div class="flex items-center space-x-2">
+                                    <div class="w-3 h-3 rounded-full bg-red-500"></div>
+                                    <div class="w-3 h-3 rounded-full bg-amber-500"></div>
+                                    <div class="w-3 h-3 rounded-full bg-green-500"></div>
+                                    <span class="text-xs text-gray-400 font-mono ml-2 hidden sm:inline" id="email-client-header-title">Mail Secure Sandbox</span>
+                                </div>
+                                <span class="text-[11px] text-cyan-400 font-mono">標頭檢析模式 (Header Inspection Active)</span>
+                            </div>
+
+                            <!-- Email Body Interactive Area -->
+                            <div id="email-render-target" class="p-6 space-y-6 text-gray-200 text-xs sm:text-sm overflow-y-auto max-h-[520px]">
+                                <!-- Injected dynamically via JS -->
+                            </div>
+
+                            <!-- User Verdict Actions -->
+                            <div class="bg-gray-900 border-t border-gray-800 p-4 flex flex-col sm:flex-row items-center justify-between gap-3">
+                                <span class="text-xs text-gray-400 font-semibold">檢視後做出您的安全決策：</span>
+                                <div class="flex space-x-3 w-full sm:w-auto">
+                                    <button onclick="evaluateScenarioVerdict(true)" class="flex-1 sm:flex-none px-4 py-2.5 rounded-xl bg-red-600/20 hover:bg-red-600/30 border border-red-500/50 text-red-300 font-bold text-xs flex items-center justify-center gap-2 transition active:scale-95">
+                                        <i class="fa-solid fa-triangle-exclamation text-red-400"></i> 通報為「釣魚/可疑郵件」
+                                    </button>
+                                    <button onclick="evaluateScenarioVerdict(false)" class="flex-1 sm:flex-none px-4 py-2.5 rounded-xl bg-green-600/20 hover:bg-green-600/30 border border-green-500/50 text-green-300 font-bold text-xs flex items-center justify-center gap-2 transition active:scale-95">
+                                        <i class="fa-solid fa-circle-check text-green-400"></i> 判定為「正常安全郵件」
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Right: Inspection Feedback Panel (5 Cols) -->
+                        <div class="lg:col-span-5 flex flex-col gap-4">
+                            <div class="bg-gray-900 rounded-2xl border border-gray-800 p-5 flex-grow flex flex-col justify-between">
+                                <div>
+                                    <div class="flex items-center justify-between border-b border-gray-800 pb-3 mb-4">
+                                        <h3 class="text-sm font-bold text-white flex items-center gap-2">
+                                            <i class="fa-solid fa-magnifying-glass text-cyber-cyan"></i>
+                                            郵件細節解析面板
+                                        </h3>
+                                        <span id="simulator-progress-badge" class="text-xs bg-gray-800 text-gray-300 px-2.5 py-0.5 rounded-full font-mono">已發現熱點: 0 / 0</span>
+                                    </div>
+
+                                    <div id="inspector-feedback-content" class="space-y-3">
+                                        <div class="p-6 rounded-xl bg-gray-950/60 border border-dashed border-gray-800 text-center text-gray-500 text-xs py-14">
+                                            <i class="fa-solid fa-hand-pointer text-3xl mb-3 text-cyber-cyan opacity-40 animate-bounce"></i>
+                                            <p class="font-semibold text-gray-400">請點擊左側郵件中的任何可疑標題、發件者、連結或附件。</p>
+                                            <p class="mt-1 text-[11px] text-gray-600">系統將顯示 SPF/DKIM 認證狀態與域名偽造解析。</p>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <!-- Dynamic Verdict Result Box -->
+                                <div id="verdict-modal-box" class="hidden mt-4 p-4 rounded-2xl border transition-all">
+                                    <!-- Injected by JS -->
+                                </div>
+                            </div>
+                        </div>
+
+                    </div>
+                </div>
+            </section>
+
+
+            <!-- 4. FAKE LOGIN PAGE SANDBOX (實務模擬登入頁面與動態警語實作題) -->
+            <section id="sandbox" class="space-y-6">
+                <div class="flex flex-col md:flex-row md:items-end justify-between gap-4 border-b border-gray-800 pb-4">
+                    <div>
+                        <div class="text-cyber-red text-xs font-mono font-bold tracking-wider uppercase mb-1">Interactive Sandbox Challenge</div>
+                        <h2 class="text-2xl sm:text-3xl font-extrabold text-white flex items-center gap-3">
+                            <i class="fa-solid fa-masks-theater text-cyber-red"></i> 實務模擬：偽造登入頁實作演練
+                        </h2>
+                    </div>
+                    <p class="text-gray-400 text-xs sm:text-sm max-w-md">許多同仁常常不小心點進看似一模一樣的微軟或 Google 登入頁。在這裡親自測試輸入資料，體會憑證如何被駭客秒級截獲！</p>
+                </div>
+
+                <div class="grid grid-cols-1 lg:grid-cols-12 gap-8 items-start">
+                    <!-- Fake Login Window Simulator (Left 7 cols) -->
+                    <div class="lg:col-span-7 bg-white text-gray-800 rounded-3xl shadow-2xl overflow-hidden border border-gray-700 relative">
+                        
+                        <!-- Fake Browser Address Bar -->
+                        <div class="bg-gray-100 px-4 py-2.5 border-b border-gray-300 flex items-center justify-between text-xs font-mono">
+                            <div class="flex items-center space-x-2 w-full mr-4">
+                                <i class="fa-solid fa-lock text-gray-400"></i>
+                                <div class="bg-white border border-gray-300 rounded px-3 py-1 text-red-600 font-bold w-full truncate flex items-center gap-1.5">
+                                    <span class="text-gray-400 font-normal">http://</span>login.microsoftonline-verify-auth.xyz/oauth2/login
+                                    <span class="bg-red-100 text-red-600 text-[10px] px-1.5 py-0.5 rounded font-sans ml-auto">可疑偽造網域</span>
+                                </div>
+                            </div>
+                            <span class="text-gray-400 text-[11px] whitespace-nowrap hidden sm:inline">Phish Sandbox</span>
+                        </div>
+
+                        <!-- Mock Microsoft 365 Login Content -->
+                        <div class="p-8 sm:p-12 max-w-md mx-auto space-y-6">
+                            <!-- MS Logo Mock -->
+                            <div class="flex items-center gap-2">
+                                <div class="grid grid-cols-2 gap-0.5 w-6 h-6">
+                                    <div class="bg-[#f25022]"></div>
+                                    <div class="bg-[#7fba00]"></div>
+                                    <div class="bg-[#00a4ef]"></div>
+                                    <div class="bg-[#ffb900]"></div>
+                                </div>
+                                <span class="text-xl font-semibold text-gray-700">Microsoft</span>
+                            </div>
+
+                            <div class="space-y-1">
+                                <h3 class="text-2xl font-bold text-gray-900">登入您的帳戶</h3>
+                                <p class="text-xs text-gray-500">繼續前往 Corporate M365 Security Single-Sign-On</p>
+                            </div>
+
+                            <!-- Interactive Interactive Form -->
+                            <form id="fake-login-form" onsubmit="handleFakeLoginSubmit(event)" class="space-y-4">
+                                <div>
+                                    <label class="block text-xs font-semibold text-gray-600 mb-1">電子郵件、電話或 Skype</label>
+                                    <input type="email" id="fake-input-email" required value="user.name@company.com" class="w-full px-3 py-2 border border-gray-400 rounded focus:border-blue-600 focus:outline-none text-sm text-gray-900">
+                                </div>
+                                <div>
+                                    <label class="block text-xs font-semibold text-gray-600 mb-1">密碼</label>
+                                    <input type="password" id="fake-input-password" required placeholder="請輸入您的公司密碼" class="w-full px-3 py-2 border border-gray-400 rounded focus:border-blue-600 focus:outline-none text-sm text-gray-900">
+                                </div>
+
+                                <div class="text-xs text-blue-600 hover:underline cursor-pointer">無法存取您的帳務？</div>
+
+                                <div class="pt-2 flex justify-end">
+                                    <button type="submit" class="px-8 py-2 bg-[#0067b8] hover:bg-[#005da6] text-white font-semibold rounded text-sm transition">
+                                        登入
+                                    </button>
+                                </div>
+                            </form>
+
+                            <div class="text-[11px] text-gray-400 border-t border-gray-200 pt-4 text-center">
+                                登入即表示您同意條款。© 2026 Microsoft
+                            </div>
+                        </div>
+
+                    </div>
+
+                    <!-- Sandbox Instruction & Security Interception Explanation (Right 5 cols) -->
+                    <div class="lg:col-span-5 space-y-4">
+                        <div class="bg-cyber-card border border-gray-800 rounded-3xl p-6 space-y-4">
+                            <div class="flex items-center gap-2 text-cyber-red font-bold text-sm">
+                                <i class="fa-solid fa-triangle-exclamation text-lg"></i>
+                                實作題解說：如何識別偽造登入頁？
+                            </div>
+                            <p class="text-xs text-gray-300 leading-relaxed">
+                                在左側的擬真登入視窗中試著輸入任意測試密碼並點擊「登入」。系統將會現場模擬駭客如何透過 HTTP POST 攔截您的帳號密碼，並彈出資安即時警告！
+                            </p>
+                            <div class="space-y-2 pt-2 border-t border-gray-800 text-xs text-gray-400">
+                                <div class="flex items-start gap-2">
+                                    <i class="fa-solid fa-check text-cyber-green mt-0.5"></i>
+                                    <span><strong>觀察網址列 Domain：</strong> 真實的微軟 SSO 登入頁必為 <code class="text-cyber-cyan">login.microsoftonline.com</code>，左側網址包含 <code class="text-cyber-red">-verify-auth.xyz</code> 即為釣魚網址。</span>
+                                </div>
+                                <div class="flex items-start gap-2">
+                                    <i class="fa-solid fa-check text-cyber-green mt-0.5"></i>
+                                    <span><strong>檢查是否有 MFA 雙重驗證提示：</strong> 即使密碼遭洩漏，開啟 FIDO2 / Authenticator 仍可提供第二層重要防禦。</span>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Payload Interception Terminal Display (Hidden until submit) -->
+                        <div id="sandbox-interception-terminal" class="hidden bg-gray-950 rounded-2xl border border-red-500/50 p-5 font-mono text-xs space-y-3 animate-pulse-slow shadow-2xl">
+                            <div class="flex items-center justify-between border-b border-red-900/50 pb-2 text-red-400 font-bold">
+                                <span><i class="fa-solid fa-bug"></i> HTTP POST Data Harvested!</span>
+                                <span class="bg-red-500/20 text-red-300 px-2 py-0.5 rounded text-[10px]">即時攔截封包</span>
+                            </div>
+                            <div class="space-y-1 text-gray-300 text-[11px]">
+                                <div class="text-gray-500">POST /oauth2/login HTTP/1.1</div>
+                                <div class="text-gray-500">Host: login.microsoftonline-verify-auth.xyz</div>
+                                <div class="text-cyber-cyan">User-Agent: Mozilla/5.0 (Security-Simulator)</div>
+                                <div class="pt-2 text-amber-400">Captured Body Payload:</div>
+                                <div class="bg-black p-2 rounded border border-gray-800 text-green-400">
+                                    {<br/>
+                                    &nbsp;&nbsp;"username": "<span id="captured-email">user@company.com</span>",<br/>
+                                    &nbsp;&nbsp;"password": "<span id="captured-password">******</span>",<br/>
+                                    &nbsp;&nbsp;"client_ip": "61.216.xx.xx"<br/>
+                                    }
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+
+            <!-- 5. 20-QUESTION COMPREHENSIVE RANDOMIZED EXAM SYSTEM -->
+            <section id="exam" class="space-y-6">
+                <div class="bg-cyber-card border border-gray-800 rounded-3xl p-6 sm:p-10 relative overflow-hidden">
+                    <div class="max-w-4xl mx-auto space-y-6 relative z-10">
+                        
+                        <div class="text-center space-y-2 border-b border-gray-800 pb-6">
+                            <span class="px-3 py-1 bg-cyan-500/10 text-cyber-cyan border border-cyan-500/20 text-xs font-mono font-bold rounded-full">
+                                Comprehensive Assessment Exam
+                            </span>
+                            <h2 class="text-2xl sm:text-4xl font-extrabold text-white">20 題企業資安社交工程綜合隨堂測驗</h2>
+                            <p class="text-gray-400 text-xs sm:text-sm">測驗題庫涵蓋郵件標頭、MFA 疲勞轟炸、QR Code 釣魚 (Quishing)、Deepfake 聲紋詐騙與 SPF/DMARC 認證。答題完成將即時計算分數並同步紀錄至教師後台。</p>
+                        </div>
+
+                        <!-- Exam Student Info Input Modal / Bar -->
+                        <div class="grid grid-cols-1 sm:grid-cols-2 gap-4 bg-gray-950 p-4 rounded-2xl border border-gray-800">
+                            <div>
+                                <label class="block text-xs text-gray-400 mb-1">測驗學員姓名 / 員工編號：</label>
+                                <input type="text" id="exam-student-name" value="陳小明 (EMP-8821)" class="w-full bg-gray-900 border border-gray-700 rounded-xl px-3 py-2 text-sm text-white focus:outline-none focus:border-cyber-cyan">
+                            </div>
+                            <div>
+                                <label class="block text-xs text-gray-400 mb-1">所屬部門 / 班級：</label>
+                                <select id="exam-student-dept" class="w-full bg-gray-900 border border-gray-700 rounded-xl px-3 py-2 text-sm text-white focus:outline-none focus:border-cyber-cyan">
+                                    <option value="資訊技術處 (IT)">資訊技術處 (IT)</option>
+                                    <option value="財務金融處 (Finance)">財務金融處 (Finance)</option>
+                                    <option value="人力資源處 (HR)">人力資源處 (HR)</option>
+                                    <option value="業務行銷部 (Sales)">業務行銷部 (Sales)</option>
+                                    <option value="營運總務處 (Ops)">營運總務處 (Ops)</option>
+                                </select>
+                            </div>
+                        </div>
+
+                        <!-- Exam Questions Container -->
+                        <div id="exam-questions-wrapper" class="space-y-6">
+                            <!-- 20 Questions rendered dynamically -->
+                        </div>
+
+                        <!-- Exam Submit & Progress Control -->
+                        <div class="pt-6 border-t border-gray-800 flex flex-col sm:flex-row items-center justify-between gap-4">
+                            <div class="text-xs text-gray-400 font-mono" id="exam-progress-counter">
+                                答題進度：<span class="text-cyber-cyan font-bold" id="exam-answered-count">0</span> / 20 題
+                            </div>
+                            <button onclick="submitExam()" class="w-full sm:w-auto px-8 py-3.5 rounded-xl bg-gradient-to-r from-indigo-500 via-purple-500 to-pink-500 hover:from-indigo-400 hover:to-pink-400 text-white font-extrabold text-xs sm:text-sm shadow-xl transition active:scale-95">
+                                <i class="fa-solid fa-paper-plane mr-2"></i> 提交 20 題測驗並生成成績報告
+                            </button>
+                        </div>
+
+                        <!-- Exam Certificate & Detailed Result Display Modal -->
+                        <div id="exam-certificate-modal" class="hidden bg-gray-950 border border-gray-800 rounded-3xl p-6 sm:p-8 space-y-6 animate-fade-in shadow-2xl">
+                            <!-- Dynamic Result Injected Here -->
+                        </div>
+
+                    </div>
+                </div>
+            </section>
+
+        </div>
+
+
+        <!-- ========================================== -->
+        <!-- TEACHER / SECURITY OFFICER ADMIN PORTAL -->
+        <!-- ========================================== -->
+        <div id="teacher-view-container" class="hidden space-y-8">
+            
+            <!-- Admin Header Banner -->
+            <div class="bg-gradient-to-r from-indigo-950 via-slate-900 to-slate-950 border border-indigo-500/30 rounded-3xl p-6 sm:p-8 space-y-4">
+                <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+                    <div>
+                        <div class="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-indigo-500/10 text-indigo-400 border border-indigo-500/20 text-xs font-mono font-bold">
+                            <i class="fa-solid fa-user-gear"></i> Admin Security Command Center
+                        </div>
+                        <h2 class="text-2xl sm:text-4xl font-extrabold text-white mt-2">教師與資安官成績管理後台</h2>
+                        <p class="text-gray-400 text-xs sm:text-sm">實時監控全體學員測驗成績、高風險同仁比例、各部門演練成效與 CSV 數據匯出。</p>
+                    </div>
+                    
+                    <div class="flex items-center space-x-3">
+                        <button onclick="exportGradesToCSV()" class="px-4 py-2.5 rounded-xl bg-emerald-600 hover:bg-emerald-500 text-white font-bold text-xs flex items-center gap-2 shadow-lg transition active:scale-95">
+                            <i class="fa-solid fa-file-csv text-base"></i> 匯出成績 CSV 報表
+                        </button>
+                        <button onclick="clearGradeRecords()" class="px-3 py-2.5 rounded-xl bg-gray-800 hover:bg-red-900/50 text-gray-300 hover:text-red-300 text-xs border border-gray-700 transition">
+                            <i class="fa-solid fa-trash-can"></i> 重置數據
+                        </button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- KPI Metric Cards Grid -->
+            <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+                <div class="p-5 rounded-2xl bg-cyber-card border border-gray-800 space-y-2">
+                    <div class="flex items-center justify-between text-xs text-gray-400">
+                        <span>總測驗人數 (Total Takers)</span>
+                        <i class="fa-solid fa-users text-cyber-cyan"></i>
+                    </div>
+                    <div class="text-3xl font-extrabold text-white font-mono" id="kpi-total-takers">0</div>
+                    <div class="text-[11px] text-gray-500">累計參與測驗學員數</div>
+                </div>
+
+                <div class="p-5 rounded-2xl bg-cyber-card border border-gray-800 space-y-2">
+                    <div class="flex items-center justify-between text-xs text-gray-400">
+                        <span>全班平均分數 (Average Score)</span>
+                        <i class="fa-solid fa-chart-simple text-cyber-amber"></i>
+                    </div>
+                    <div class="text-3xl font-extrabold text-cyber-amber font-mono" id="kpi-avg-score">0.0</div>
+                    <div class="text-[11px] text-gray-500">及格標準線：80 分</div>
+                </div>
+
+                <div class="p-5 rounded-2xl bg-cyber-card border border-gray-800 space-y-2">
+                    <div class="flex items-center justify-between text-xs text-gray-400">
+                        <span>測驗及格率 (Pass Rate)</span>
+                        <i class="fa-solid fa-graduation-cap text-cyber-green"></i>
+                    </div>
+                    <div class="text-3xl font-extrabold text-cyber-green font-mono" id="kpi-pass-rate">0%</div>
+                    <div class="text-[11px] text-gray-500">達到 80 分以上之比例</div>
+                </div>
+
+                <div class="p-5 rounded-2xl bg-cyber-card border border-gray-800 space-y-2">
+                    <div class="flex items-center justify-between text-xs text-gray-400">
+                        <span>高風險同仁比例 (High Risk)</span>
+                        <i class="fa-solid fa-shield-virus text-cyber-red"></i>
+                    </div>
+                    <div class="text-3xl font-extrabold text-cyber-red font-mono" id="kpi-high-risk">0%</div>
+                    <div class="text-[11px] text-gray-500">得分低於 60 分之比例</div>
+                </div>
+            </div>
+
+            <!-- Search & Filters Control Bar -->
+            <div class="bg-cyber-card border border-gray-800 p-4 rounded-2xl flex flex-col sm:flex-row items-center justify-between gap-4">
+                <div class="flex flex-col sm:flex-row items-center gap-3 w-full sm:w-auto">
+                    <!-- Search Input -->
+                    <div class="relative w-full sm:w-64">
+                        <i class="fa-solid fa-magnifying-glass absolute left-3 top-3 text-xs text-gray-500"></i>
+                        <input type="text" id="admin-search-input" oninput="renderAdminTable()" placeholder="搜尋姓名或員工編號..." class="w-full bg-gray-950 border border-gray-700 rounded-xl pl-9 pr-3 py-2 text-xs text-white focus:outline-none focus:border-cyber-cyan">
+                    </div>
+                    
+                    <!-- Dept Filter -->
+                    <select id="admin-dept-filter" onchange="renderAdminTable()" class="w-full sm:w-auto bg-gray-950 border border-gray-700 text-xs rounded-xl px-3 py-2 text-white focus:outline-none focus:border-cyber-cyan">
+                        <option value="ALL">所有部門 / 班級</option>
+                        <option value="資訊技術處 (IT)">資訊技術處 (IT)</option>
+                        <option value="財務金融處 (Finance)">財務金融處 (Finance)</option>
+                        <option value="人力資源处 (HR)">人力資源處 (HR)</option>
+                        <option value="業務行銷部 (Sales)">業務行銷部 (Sales)</option>
+                        <option value="營運總務處 (Ops)">營運總務處 (Ops)</option>
+                    </select>
+                </div>
+
+                <div class="flex items-center gap-2 text-xs text-gray-400">
+                    <span>及格分標準設為：</span>
+                    <span class="font-mono font-bold text-cyber-cyan bg-gray-950 px-2.5 py-1 rounded-lg border border-gray-800">80 分</span>
+                </div>
+            </div>
+
+            <!-- Grade Records Data Table -->
+            <div class="bg-cyber-card border border-gray-800 rounded-3xl overflow-hidden shadow-2xl">
+                <div class="overflow-x-auto">
+                    <table class="w-full text-left border-collapse">
+                        <thead>
+                            <tr class="bg-gray-950 border-b border-gray-800 text-[11px] uppercase font-mono text-gray-400 tracking-wider">
+                                <th class="py-3.5 px-4">學員姓名 / 員編</th>
+                                <th class="py-3.5 px-4">所屬部門</th>
+                                <th class="py-3.5 px-4">測驗成績</th>
+                                <th class="py-3.5 px-4">及格狀態</th>
+                                <th class="py-3.5 px-4">完成時間</th>
+                                <th class="py-3.5 px-4 text-center">操作與明細</th>
+                            </tr>
+                        </thead>
+                        <tbody id="admin-table-body" class="divide-y divide-gray-800/60 text-xs text-gray-300 font-sans">
+                            <!-- Rows Injected by JS -->
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
+        </div>
+
+    </main>
+
+
+    <!-- FOOTER -->
+    <footer class="border-t border-gray-800 bg-gray-950 text-gray-500 text-xs py-8 mt-16">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex flex-col sm:flex-row items-center justify-between gap-4">
+            <div class="flex items-center space-x-2">
+                <i class="fa-solid fa-shield text-cyber-cyan"></i>
+                <span>CyberDefender Social Engineering Platform &copy; 2026</span>
+            </div>
+            <p class="text-center sm:text-right text-gray-600">
+                本系統為企業與學術內部資安防禦演練專用平台。所有擬真範本皆為教育宣導用途。
+            </p>
+        </div>
+    </footer>
+
+
+    <!-- JAVASCRIPT LOGIC ENGINE -->
+    <script>
+        // ... existing JavaScript code ...
+
+        // Sandbox Portal Switcher Logic
+        const portalConfig = {
+            m365: {
+                name: 'Microsoft 365',
+                url: 'https://login.microsoftonline.account-verify-auth.com/oauth2/login',
+                analysis: '攻擊者利用 Lookalike Domain (相似網域 account-verify-auth.com) 模仿微軟 SSO 登入頁。這種手法常搭配 Spear Phishing 郵件，騙取員工的 Azure AD / Entra ID 主機憑證。'
+            },
+            google: {
+                name: 'Google Workspace',
+                url: 'https://accounts.google.com.security-notice-update.net/signin/v2',
+                analysis: '偽造的 Google Workspace 登入介面。攻擊者利用子網域技巧 (security-notice-update.net) 誤導使用者以為是官方網域，目的在於竊取企業 Gmail 與 Cloud 存取權限。'
+            },
+            meta: {
+                name: 'Meta / FB 企業粉專',
+                url: 'https://facebook.business.support-policy-violation.org/verify',
+                analysis: '社交工程常見的手法之一「威脅與緊急情境」。攻擊者假冒 FB 官方警告企業粉專即將被封鎖，誘騙管理員輸入粉專管理帳號密碼與 2FA 驗證碼，奪取企業廣告戶控制權。'
+            }
+        };
+
+        let currentPortal = 'm365';
+
+        function selectSandboxPortal(portalKey) {
+            currentPortal = portalKey;
+            const config = portalConfig[portalKey];
+
+            // Hide all portals
+            document.getElementById('portal-m365').classList.add('hidden');
+            document.getElementById('portal-google').classList.add('hidden');
+            document.getElementById('portal-meta').classList.add('hidden');
+
+            // Show active portal
+            document.getElementById(`portal-${portalKey}`).classList.remove('hidden');
+
+            // Update URL bar
+            document.getElementById('sandbox-fake-url').innerText = config.url;
+
+            // Update portal buttons styling
+            ['m365', 'google', 'meta'].forEach(key => {
+                const btn = document.getElementById(`portal-btn-${key}`);
+                if (key === portalKey) {
+                    btn.className = 'px-4 py-2 text-xs font-semibold rounded-lg bg-cyan-600 text-white border border-cyan-400 flex items-center space-x-2 shadow-lg shadow-cyan-900/30 transition';
+                } else {
+                    btn.className = 'px-4 py-2 text-xs font-semibold rounded-lg bg-slate-800 text-slate-300 border border-slate-700 hover:bg-slate-700 flex items-center space-x-2 transition';
+                }
+            });
+
+            // Reset Interception Console
+            document.getElementById('console-target-portal').innerText = `${config.name} 偽造頁面`;
+            document.getElementById('console-logs').innerHTML = `<div class="text-slate-400">[READY] 切換至 ${config.name} 演練沙盒，等待憑證輸入...</div>`;
+            document.getElementById('interception-alert-card').classList.add('hidden');
+            document.getElementById('interception-status').innerText = '狀態: 監聽中...';
+            document.getElementById('interception-status').className = 'text-xs text-slate-400 font-mono';
+        }
+
+        // Trigger Interception Analysis
+        function triggerInterception(event, platformName) {
+            event.preventDefault();
+            const config = portalConfig[currentPortal];
+
+            let userVal = '';
+            let passVal = '';
+
+            if (currentPortal === 'm365') {
+                userVal = document.getElementById('m365-email').value;
+                passVal = document.getElementById('m365-pass').value;
+            } else if (currentPortal === 'google') {
+                userVal = document.getElementById('google-email').value;
+                passVal = document.getElementById('google-pass').value;
+            } else if (currentPortal === 'meta') {
+                userVal = document.getElementById('meta-email').value;
+                passVal = document.getElementById('meta-pass').value;
+            }
+
+            // Update Console
+            const logs = document.getElementById('console-logs');
+            const now = new Date().toLocaleTimeString();
+            logs.innerHTML = `
+                <div class="text-yellow-400">[${now}] [HTTP POST] 觸發表單提交事件 (Form Submit)</div>
+                <div class="text-red-400">[${now}] [ALERT] 檢測到可疑網址外流數據！</div>
+                <div class="text-slate-300">>> Target Host: ${config.url.split('/')[2]}</div>
+                <div class="text-slate-300">>> Header: User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64)</div>
+                <div class="text-amber-300">>> Captured Payload: { username: "${userVal}", password: "${passVal.replace(/./g, '*')}" }</div>
+                <div class="text-red-400 font-bold">[${now}] [SUCCESS] 側錄完成！金鑰與憑證已回傳 C2 伺服器 (模擬)</div>
+            `;
+
+            // Update Alert Card
+            document.getElementById('captured-user').innerText = userVal;
+            document.getElementById('captured-pass').innerText = passVal;
+            document.getElementById('captured-domain').innerText = config.url.split('/')[2];
+            document.getElementById('captured-analysis').innerText = config.analysis;
+
+            // Show Card
+            document.getElementById('interception-alert-card').classList.remove('hidden');
+            document.getElementById('interception-status').innerText = '狀態: 攔截到側錄封包！';
+            document.getElementById('interception-status').className = 'text-xs text-red-400 font-bold font-mono animate-pulse';
+        }
+
+        // ... existing JavaScript code ...
+    </script>
